@@ -14,9 +14,7 @@ import java.awt.Point;
  */
 public class Fruit extends MapObject {
 	
-	private Point3D location;
-	private Point locationP;
-	private int id;
+	
 	private int weight;
 	
 
@@ -26,57 +24,38 @@ public class Fruit extends MapObject {
 	 * @param id
 	 * @param weight
 	 */
-	public Fruit(Point3D location, int id, int weight) 
-	{
-		this.SetId(id);
-		this.SetLocation(location);
-		this.SetWeight(weight);
-	}
 	
-	public Fruit(Point locationP, int id, int weight) 
+	public Fruit(Fruit frt) 
 	{
-		this.SetId(id);
-		this.SetLocationP(locationP);
-		this.SetWeight(weight);
+	     this(frt.GetPointlocation(),frt.GetId(),frt.GetWeight());
 	}
 
-	public Fruit() //Point locationP, int id, int weight
+	public Fruit(Point pnt, int id, int weight) 
 	{
 		this.SetId(id);
-		this.SetLocationP(locationP);
+		this.SetPointLocation(pnt);
 		this.SetWeight(weight);
+		
 	}
+	
+	public Fruit( int id, int weight, Point3D pnt) 
+	{
+		this.SetId(id);
+		this.SetWeight(weight);
+		this.SetPoint3DLocation(pnt);
+	}
+	
+	
+//	public Fruit() //Point locationP, int id, int weight
+//	{
+//		this.SetId(id);
+//		this.SetLocationP(locationP);
+//		this.SetWeight(weight);
+//		this.SetLocation(location);
+//	}
 
 
-	public void SetLocationP(Point locationP) 
-	{
-		this.locationP=locationP;
-	}
 	
-	public Point getlocationP() 
-	{
-		return getlocationP();
-	}
-	////
-	public void SetLocation(Point3D location) 
-	{
-		this.location=location;
-	}
-	
-	public Point3D getlocation() 
-	{
-		return location;
-	}
-	
-	public void SetId(int id) 
-	{
-		this.id=id;
-	}
-	
-	public int GetId() 
-	{
-		return id;
-	}
    
 	public void SetWeight(int weight) 
 	{
@@ -90,7 +69,7 @@ public class Fruit extends MapObject {
 	
 	public String toString() 
 	{
-		String s= "Fruit:\n location="+ location + ",id=" + id +" ,weight="+ weight; 
+		String s= "Fruit:\n location="+ "x: "+ super.GetPointlocation().x+"y: "+ super.GetPointlocation().y + ",id=" + super.GetId() +" ,weight="+ weight; 
 		return s;
 	}
 	
@@ -98,7 +77,7 @@ public class Fruit extends MapObject {
 	    {
 	    	g.setColor(Color.green);
 	    	//Point pixel=Map.getPositionOnScreen(this.location.x(), this.location.y())
-			g.fillOval(this.locationP.x, this.locationP.y,10, 10);
+			g.fillOval(super.GetPointlocation().x, super.GetPointlocation().y,10, 10);
 
 	    }
 }

@@ -58,7 +58,7 @@ class PacmanTimer
 	public void Start(int pcID, int period) {
 		// TODO Auto-generated method stub
 		timer=new Timer();
-		timer.scheduleAtFixedRate( new PacmanDoTask(m_form,pcID), (long)1000* period, (long)1000 * period /** 60 * 60 * period*/); 
+		timer.scheduleAtFixedRate( new PacmanDoTask(m_form,pcID), (long)200* period, (long)200 * period /** 60 * 60 * period*/); 
 	}
 	public void Stop() 
 	{
@@ -71,24 +71,23 @@ class PacmanDoTask extends TimerTask {
 	MyFrame m_form  = null;
 	int m_pcID = -1;
 	PacmanDoTask(MyFrame form,int pcID){m_form = form;m_pcID = pcID;}
-	public void run() {
+	public void run() 
+	{
 		System.out.println("PC ID "+ m_pcID);
-		m_form.Repaint(m_pcID);
+		m_form.Repaint();
 		//code to send SMS.
-
 	}
-
-
 }
 
 public class MyFrame extends JFrame implements MouseListener
 {
+	long gameTimeSec = 0;
 	MyMap map= new MyMap();
 	Game game= new Game();
 	//ShortestPathAlgo pathManager= new ShortestPathAlgo(game);
-	PacmanTimer pacTimer1 = new PacmanTimer(this);
-	PacmanTimer pacTimer2 = new PacmanTimer(this);
-	int m_pcID = -1;
+	ShortestPathAlgo pathManager;
+	PacmanTimer pacsTimer = new PacmanTimer(this);
+	
 
 	ArrayList<Point>pnts = new ArrayList<>();
 	//public BufferedImage myImage;
@@ -101,28 +100,32 @@ public class MyFrame extends JFrame implements MouseListener
 
 		//timerDraw.scheduleAtFixedRate(arg0, arg1, arg2);
 	}
-	public void Repaint(int pcID) {
+	public void Repaint() {
 		// TODO Auto-generated method stub
-		m_pcID = pcID;
+		gameTimeSec++;
+		boolean ans = pathManager.UpdateGameState(gameTimeSec);
+		if(ans == false)
+			pacsTimer.Stop();
 		repaint();
 		//m_pcID = -1;
 	}
 	private void InitPnts()
 	{
-		pnts.add(new Point(100,200));
-		pnts.add(new Point(200,300));
-		pnts.add(new Point(300,400));
-		pnts.add(new Point(400,500));
+//		pnts.add(new Point(100,200));
+//		pnts.add(new Point(200,300));
+//		pnts.add(new Point(300,400));
+//		pnts.add(new Point(400,500));
 	}
 
 	private void DrawPC(Graphics g,int index)
 	{
 		if(index!=-1)
 		{
-			int r = 10;
-			Point point  = pnts.get(index);
-			point.x = point.x - (r / 2);
-			point.y = point.y - (r / 2);
+		
+//			int r = 10;
+//			Point point  = pnts.get(index);
+//			point.x = point.x - (r / 2);
+//			point.y = point.y - (r / 2);
 		}
 	}
 
@@ -140,19 +143,12 @@ public class MyFrame extends JFrame implements MouseListener
 	private void DrawPoints(Graphics g)
 	{
 		g.drawImage(map.GetImage(), 0, 0, this);
-	//	g.drawImage(map.GetImage(), 0, 0, this);
 		g.drawImage(packman, 10, 10, this);
-	//	g.drawImage(packmanIcon, x, y, this);
-		//g.setColor(Color.yellow);
 		for (Point point : pnts) {
 			if(x!=-1 && y!=-1)
 			{
 				int r =30;
-				//point.x = point.x - (r / 2);
-				//point.y = point.y - (r / 2);
 				g.fillOval(point.x, point.y, r, r);
-
-
 			}
 		}
 
@@ -200,18 +196,20 @@ public class MyFrame extends JFrame implements MouseListener
 				chooser.setFileFilter(filter);
 				int returnVal = chooser.showOpenDialog(null);
 				if(returnVal == JFileChooser.APPROVE_OPTION || true)
+			
 				{
-					//String csvFileName="C:\\dataGame\\game_1543684662657.csv";
-					String csvFileName=chooser.getSelectedFile().getPath();
+					String csvFileName = chooser.getSelectedFile().getPath();
 					game.LoadCsv(csvFileName);
-				    System.out.println("You chose to open file: " + chooser.getSelectedFile().getName());
-				    repaint();
-
+				    //System.out.println("You chose to open file: " + chooser.getSelectedFile().getName());
+                    repaint();
+                    pathManager= new ShortestPathAlgo(game);
+                    pathManager.InitShortestPathAlgo();
+                
+                   
 				}
 				
 			}
 		};
-  
 		ActionListener argRun = new ActionListener() {
 
 			@Override
@@ -222,8 +220,8 @@ public class MyFrame extends JFrame implements MouseListener
 				System.out.println("menue a Clicked");
 				x = 500;
 				y = 500;
-				pacTimer1.Start(1, 2);
-				pacTimer2.Start(2, 2);
+				pacsTimer.Start(1, 2);
+				
 				
 
 			}
@@ -237,9 +235,7 @@ public class MyFrame extends JFrame implements MouseListener
 				b++;
 				System.out.println("menue b Clicked");
 				//timer.purge();
-				pacTimer1.Stop();
-
-				pacTimer2.Stop();
+				pacsTimer.Stop();
 			}
 		};
 		itemRun.addActionListener(argRun);
@@ -268,35 +264,51 @@ public class MyFrame extends JFrame implements MouseListener
 
 	public void DrawPackmans(Graphics g, ArrayList<Packman> packmanLst) 
 	{
+		Color clrOld = g.getColor();
+		Color[] clrs =  new Color[] {Color.BLUE,Color.CYAN,Color.RED};
+		int idxColor =0;
 		for (Iterator<Packman> iterator = packmanLst.iterator(); iterator.hasNext();) {
 			Packman packman = (Packman) iterator.next();
-			packman.Draw(g);
-			
+			Color color = (clrs[idxColor]);
+			packman.Draw(g,color);
+			idxColor++;
+			idxColor%=3;
 		}
+		g.setColor(clrOld);
 	}
 	public void DrawFruits(Graphics g, ArrayList<Fruit> fruitLst) 
 	{
-		for (Iterator<Fruit> iterator = fruitLst.iterator(); iterator.hasNext();) {
-			Fruit fruit = (Fruit) iterator.next();
-			fruit.Draw(g);
+//		for (Iterator<Fruit> iterator = fruitLst.iterator(); iterator.hasNext();) {
+//			Fruit fruit = (Fruit) iterator.next();
+		for (int idxFrut = 0; idxFrut < fruitLst.size(); idxFrut++) 
+		{
+			if(fruitLst.get(idxFrut)!=null)
+			
+			//fruit.Draw(g);
+			fruitLst.get(idxFrut).Draw(g);
+			
+			else
+				continue;
+	
+		}
 			
 		}
-	}
+	
 	public BufferedImage myImage;
 	public void paint(Graphics g)
 	{
 		
-		DrawPC(g,m_pcID);
-		DrawPoints(g);
-		g.drawImage(myImage, 0, 0, this);
-
-		if(x!=-1 && y!=-1)
-		{
-			int r = 10;
-			x = x - (r / 2);
-			y = y - (r / 2);
-			g.fillOval(x, y, r, r);
-		}
+		//DrawPC(g,m_pcID);
+		//DrawPoints(g);
+		g.drawImage(map.GetImage(), 0, 0, this);
+		//g.drawImage(myImage, 0, 0, this);
+//		if(x!=-1 && y!=-1)
+//		{
+//			int r = 10;
+//			x = x - (r / 2);
+//			y = y - (r / 2);
+//			g.fillOval(x, y, r, r);
+//		}
 		ArrayList<Packman> packmanLst= game.getArrListPac();
 		if(packmanLst!=null) 
 		DrawPackmans(g,packmanLst);

@@ -18,12 +18,11 @@ import Map.MyMap;
  */
 public class Packman extends MapObject {
 
-	private int id;
-	private Point3D locationPoint;
-	private Point location;
+	
 	private double speed;
 	private int radius;
 	private double timeInPath;
+	private int pathIdx =0;
 
 	/**
 	 * init
@@ -32,63 +31,52 @@ public class Packman extends MapObject {
 	 * @param radius
 	 * @param id
 	 */
-	public Packman(Point3D locationPoint,double speed,int radius,int id)
+	public Packman(Packman pc)
 	{
-		this.setLocationPoint(locationPoint);
+		this(pc.GetPoint3Dlocation(),pc.getSpeed(),pc.getRadius(), pc.GetId());
+	}
+	public Packman(Point3D pnt,double speed,int radius, int id)
+	{
+		super.SetPoint3DLocation(pnt);
+		super.SetId(id);
 		this.setSpeed(speed);
 		this.setRadius(radius);
-		this.setId(id);
+		
+		
 	}
 	
-	public Packman(Point location,double speed,int radius,int id)
+	public int GetCurrentPathIndex()
 	{
-		this.setLocation(location);
+		return pathIdx;
+	}
+	public int IncreasePathIndex()
+	{
+		return pathIdx++;
+	}
+	
+	public Packman(Point pnt,double speed,int radius,int id)
+	{
+		super.SetPointLocation(pnt);
+		super.SetId(id);
 		this.setSpeed(speed);
-		this.setRadius(radius);	
-		this.setId(id);
+		this.setRadius(radius);
+		
+
 		
 	}
 	public Packman()
 	{
-		this.setLocation(location);
-		this.setSpeed(speed);
-		this.setRadius(radius);	
-		this.setId(id);
-	}
-
-
-
-
-	public Point3D getLocationPoint() {
-		return locationPoint;
+//		super.setLocation(super.location);
+//		this.setSpeed(speed);
+//		this.setRadius(radius);	
+//		this.setId(id);
 	}
 	
-	public Point getLocation() 
-	{
-		return location;
-	}
-
-	public void setLocationPoint(Point3D locationPoint) {
-		this.locationPoint = locationPoint;
-	}
-
-	public void setLocation(Point location) {
-		this.location = location;
-	}
-
 	public double getSpeed() {
 		return speed;
 	}
 
-	public void setId(int id) 
-	{
-		this.id=id;
-	}
-
-	public int getId() 
-	{
-		return id;
-	}
+	
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
@@ -107,21 +95,21 @@ public class Packman extends MapObject {
 
 	public String toString()
 	{
-		return "Packman id=" + id + ", location=" + locationPoint + ", speed=" + speed + ", radius="+ radius;
+		return "Packman id=" + super.GetId() + ", location=" + "x:"+ super.GetPointlocation().x + "y:"+ super.GetPointlocation().y + ", speed=" + speed + ", radius="+ radius;
 	}
 
 	MyMap map= new MyMap();
 	Image packmenIcon;          
-      public void Draw(Graphics g) 
+      public void Draw(Graphics g,Color color) 
     {
-    	   	g.setColor(Color.red);
+    	   	g.setColor(/*Color.red*/color);
         	
      
       //	packmenIcon = Toolkit.getDefaultToolkit().getImage("C:\\pacman.png");
       //	g.drawImage(packmenIcon,x_pacman, y_pacman, 28, 28,this);
       	 
       	//Point pixel=Map.getPositionOnScreen(this.locationPoint.x(), this.locationPoint.y());
-  		g.fillOval(this.location.x,this.location.y,20,20);
+  		g.fillOval(super.GetPointlocation().x,super.GetPointlocation().y,20,20);
         
     }
 }

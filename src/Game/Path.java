@@ -23,63 +23,63 @@ public class Path {
 	private double time0 = 0;
 	private double timeT = -1;
 	private double DeltaTime = -1;
-	private int idxPackman =-1;
-	private int idxFruit =-1;
+	private int idPackman =-1;
+	private int idFruit =-1;
 	
 
 
 	/**
 	 * init
 	 */
-	public Path(int idxPc,int idxFrt, double DeltaTime)/*double time0,double timeT*/ 
+	public Path(int idPc,int idFrt, double DeltaTime)/*double time0,double timeT*/ 
 	{
 
-		idxPackman = idxPc;
-		idxFruit = idxFrt;
+		idPackman = idPc;
+		idFruit = idFrt;
 		this.DeltaTime = DeltaTime;
 		//this.time0 = time0;
-		//this.timeT = timeT;
+		this.timeT = DeltaTime-time0;
 		
 	}
 	
-    public int getidxPackman() 
+    public int GetIDPackman() 
     {
-    	return idxPackman;
+    	return idPackman;
     }
 
-    public int getidxFruit() 
+    public int GetIDFruit() 
     {
-    	return idxFruit;
+    	return idFruit;
     }
     
-   public double getTimeT() 
+   public double GetTimeT() 
    {
 	   return timeT;
    }
 
-   public double getTime0() 
+   public double GetTime0() 
    {
 	   return time0;
    }
-   public void setTimeT(double timeT) 
+   public void SetTimeT(double timeT) 
    {
 	   this.timeT=timeT;
    }
 
-   public void setTime0(double time0) 
+   public void SetTime0(double time0) 
    {
 	   this.time0= time0;
    }
 
 
-   public double getDeltatime() 
+   public double GetDeltatime() 
    {
 	   return DeltaTime;
    }
 
 	public String toString()
 	{
-		return "Path:\n packman ID: " + idxPackman +"Fruit ID: "+ idxFruit+", time total:" + timeT + ", Packman start time:" + time0 +"delta time:"+DeltaTime;
+		return "Path:\n packman ID: " + idPackman +"Fruit ID: "+ idFruit+", time total:" + timeT + ", Packman start time:" + time0 +"delta time:"+DeltaTime;
 	}
 
 }

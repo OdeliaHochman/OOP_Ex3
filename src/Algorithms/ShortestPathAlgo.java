@@ -6,7 +6,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedSet;
 
 import Coords.MyCoords;
@@ -16,6 +18,7 @@ import Game.Game;
 import Game.Packman;
 import Game.Path;
 import Game.Solution;
+import Geom.Point3D;
 import Map.MyMap;
 
 import java.awt.Point;
@@ -35,55 +38,245 @@ public class ShortestPathAlgo {
 	private long gameTimeSec;
 	ArrayList<Packman> packmanList;
 	ArrayList<Fruit>fruitList;
-	private HashSet<Integer> hashAvailableFrt = new HashSet<>();
-	double timeTotal = path.getTime0()+path.getDeltatime();
+	//private HashSet<Integer> hashAvailableFrt = new HashSet<>();
+	private HashMap<Integer,Fruit> hashAvailableFruit = new HashMap<>();
+	private HashMap<Integer,Packman> hashAvailablePackman = new HashMap<>();
+	//double timeTotal = path.getTime0()+path.getDeltatime();//efrat 24.12.18
 	Solution allPath = new Solution();
-
+    private int nAvailableFruit =0;
 
 	
 	
 	public ShortestPathAlgo(Game game) 
 	{
 		this.game=game;
-		this.fruitList=game.getArrListFruit();
-		this.packmanList=game.getArrListPac();
-		for (int index =0; index< fruitList.size();index++) {
-		//Fruit fruit = (Fruit) iterator.next();
-	    //Fruit f = fruitList.get(index);
-		hashAvailableFrt.add(index);
-//		if(hashAvailableFrt.contains(0)) {}
-		}
 		
-	};
+	}
 
-	public ShortestPathAlgo()
+	private void InitPacmansLocation()
+	{
+		for (int index =0; index< packmanList.size();index++) 
+		{
+		  Packman pc = this.packmanList.get(index);	
+		  hashAvailablePackman.put(pc.GetId(),pc);
+		}
+	}
+	private void InitFruitsLocation()
+	{
+		for (int index =0; index< fruitList.size();index++) 
+		{
+		 //hashAvailableFrt.add(index);
+		  Fruit frt = this.fruitList.get(index);
+		  hashAvailableFruit.put(frt.GetId(),new Fruit(frt));
+		}
+		nAvailableFruit = fruitList.size();
+	}
+	boolean IsEatable(int idPc,int idFrut,double pathTotalTime)
+	{
+		boolean ans1= IsPackmanReachedFruit(gameTimeSec,pathTotalTime);
+		Fruit frt = hashAvailableFruit.get(idFrut);
+		Packman pc = hashAvailablePackman.get(idPc);
+		boolean ans2= false;
+		if(frt!=null&&pc!=null)
+		{
+			ans2 =	IsPackmanReachedFruit2(pc.GetPoint3Dlocation(),frt.GetPoint3Dlocation(),1);
+		}
+		return ans1||ans2;
+	}
+	boolean IsEatable2(int idPc,int idFrut,double pathTotalTime)
+	{
+		boolean ans1= IsPackmanReachedFruit(gameTimeSec,pathTotalTime);
+		Fruit frt = hashAvailableFruit.get(idFrut);
+		Packman pc = hashAvailablePackman.get(idPc);
+		boolean ans2= false;
+		if(frt!=null&&pc!=null)
+		{
+			ans2 =	IsPackmanReachedFruit2(pc.GetPoint3Dlocation(),
+				frt.GetPoint3Dlocation(),1);
+		}
+		return ans1||ans2;
+	}
+	void EatFruit(int idPc,int idFrut)
+	{
+		Packman pcTst = hashAvailablePackman.get(idPc);
+		
+		if(hashAvailableFruit.containsKey(idFrut))
+		{
+			Fruit frtTst = hashAvailableFruit.get(idFrut);
+			pcTst.SetPointLocation(frtTst.GetPointlocation());
+		  //hashAvailableFrt.remove(idxFrut);
+		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
+		  //nAvailableFruit = hashAvailableFruit.size();
+		  
+			
+		}
+	}
+	public void InitShortestPathAlgo()
 	{
 		gameTimeSec =0;
-		setSpeed(speed);
+		//setSpeed(speed);
 		setTime(gameTimeSec);
 		this.fruitList=game.getArrListFruit();
 		this.packmanList=game.getArrListPac();
 		
-		while(hashAvailableFrt.size()>0) 
+		for (int index =0; index< packmanList.size();index++) 
 		{
+		 //hashAvailableFrt.add(index);
+		  Packman pc = this.packmanList.get(index);	
+		  hashAvailablePackman.put(pc.GetId(),new Packman(pc));
+		}
+		
+		for (int index =0; index< fruitList.size();index++) 
+		{
+		 //hashAvailableFrt.add(index);
+		  Fruit frt = this.fruitList.get(index);
+		  hashAvailableFruit.put(frt.GetId(),new Fruit(frt));
+		}
+		nAvailableFruit = hashAvailableFruit.size();
+		int nMinFruits =54;
+		while(nAvailableFruit>0) 
+		{
+			
+			//nAvailableFruit = hashAvailableFruit.size();
+			//if(nAvailableFruit == nMinFruits)
+				//break;
 			if(gameTimeSec == 0)
 				InitPathes();
-			for (int idx = 0; idx < packmanList.size(); idx++) 
-			{
-				boolean ans= IsPackmanReachToFruit(getTime(),timeTotal);
-				if(ans==false) 
-				{
-					hashAvailableFrt.remove(fruitList.get(idx));
-					pathPacToOneFruit(packmanList.get(idx));	
-				}
+			gameTimeSec++;
+			for (Entry<Integer, Packman> subSet: hashAvailablePackman.entrySet()) 
+			 {
+				  final Integer idPc = subSet.getKey();
+				  final Packman pac = subSet.getValue();
+			//for (int idxPc = 0; idxPc < packmanList.size(); idxPc++) 
+			//{
+				Path path = allPath.GetLastPath(idPc);
+				int idFrut = path.GetIDFruit();
+				double pathTotalTime = path.GetTimeT();
 				
-				else
+				//boolean ans= IsPackmanReachToFruit(getTime(),timeTotal);//efrat 24.12.18
+				boolean ans = IsEatable(idPc,idFrut,pathTotalTime);
+				//if(ans==false)
+				if(ans== true)
+				{
+					EatFruit(idPc,idFrut);
+					nAvailableFruit--;
+					if(nAvailableFruit == 0)//no more fruits to eat
+					{
+						break;
+					}
+					//hashAvailableFrt.remove(fruitList.get(idxPc));
 					
-					gameTimeSec++;
-
+//					if(pcTst.GetPointlocation().y >=2147483647)
+//				    {
+//				    	int x=0;
+//				    	x++;
+//				    }
+//					if(nAvailableFruit == 1)
+//					{
+//						int x=0;
+//				    	x++;
+//					}
+					PathPac2Fruit(hashAvailablePackman.get(idPc));	
+				}
+				else
+				{
+					if(hashAvailablePackman.containsKey(idPc))
+					{
+						Packman pcTst = hashAvailablePackman.get(idPc);
+						Fruit frtTst = hashAvailableFruit.get(idFrut);
+						if(pcTst.GetPointlocation().y >=2147483647)
+					    {
+					    	int x=0;
+					    	x++;
+					    }
+						else
+							if(frtTst!=null)
+						       SetPosition2Time(path,pcTst,frtTst , gameTimeSec);
+							else
+								PathPac2Fruit(hashAvailablePackman.get(idPc));
+					}
+				}
+				if(gameTimeSec == 76)
+				{
+					int x =0;
+				    x++;
+				}
+				//gameTimeSec++;
 			}
 		}
-	
+		int x =0;
+	    x++;
+	    InitPacmansLocation();
+	    InitFruitsLocation();
+	    gameTimeSec =0;
+	}
+	public void UpadteFruitsArray()
+	{
+//		for (Iterator iterator = packmanList.iterator(); iterator.hasNext();) {
+//			Packman pc = (Packman) iterator.next();
+//		}
+		fruitList.clear();
+		for (Entry<Integer, Fruit> subSet: hashAvailableFruit.entrySet()) 
+		 {
+			  //final Integer idFrt = subSet.getKey();
+			  final Fruit frt = subSet.getValue();
+			  fruitList.add(new Fruit(frt));
+		 }
+		int x=0;
+		x++;
+	}
+	public boolean  UpdateGameState(double gameTimeSec)
+	{
+		for (Iterator iterator = packmanList.iterator(); iterator.hasNext();) {
+			Packman pc = (Packman) iterator.next();
+			Path currPath = GetPackCurrentPath(pc,gameTimeSec);
+			if(currPath!=null)
+			{
+			   Fruit frt = hashAvailableFruit.get(currPath.GetIDFruit());
+			   if(frt == null)
+			   {
+				   pc.IncreasePathIndex();
+				   currPath = GetPackCurrentPath(pc,gameTimeSec);
+				   frt = hashAvailableFruit.get(currPath.GetIDFruit());
+			   }
+			   SetPosition2Time(currPath, pc, frt, gameTimeSec);
+			   boolean ans = IsEatable2(pc.GetId(),frt.GetId(),currPath.GetTimeT());
+				//if(ans==false)
+				if(ans== true)
+				{
+					//EatFruit(pc.GetId(),frt.GetId());
+					//UpadteFruitsArray();
+					//pc.IncreasePathIndex();
+//					nAvailableFruit--;
+//					if(nAvailableFruit == 0)//no more fruits to eat
+//					{
+//						break;
+//					}
+				}
+			}
+		}
+		if(hashAvailableFruit.size()>0)
+			return true;
+		else
+			return false;
+		
+	}
+
+	private Path GetPackCurrentPath(Packman pc,double gameTimeSec) {
+		
+		Path path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
+		if(path != null&& pc!=null)
+		{
+			if(gameTimeSec < path.GetTimeT())//if time in path, get current path;
+			   return path;
+			else
+			{
+				pc.IncreasePathIndex();// get next path
+				path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
+				return path;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -93,7 +286,7 @@ public class ShortestPathAlgo {
 	{
 		for (int idx = 0; idx < this.packmanList.size(); idx++)
 		{
-			pathPacToOneFruit(this.packmanList.get(idx));
+			PathPac2Fruit(this.packmanList.get(idx));
 		}
 	
 	}
@@ -108,8 +301,8 @@ public class ShortestPathAlgo {
 	public static double distanceInTimeP2F(Packman p, Fruit f)
 	{
 		double distance=0.0;
-		Point pointPc=p.getLocation();
-		Point pointFr=f.getlocationP();
+		Point pointPc=p.GetPointlocation();
+		Point pointFr=f.GetPointlocation();
 		distance=MyMap.DisBetweenPixels(pointPc, pointFr);
 		double time= distance/p.getSpeed();
 		
@@ -120,16 +313,50 @@ public class ShortestPathAlgo {
 	 * The function calculates one Pacman path to one fruit
 	 * @param p-packman
 	 */
-	public void pathPacToOneFruit(Packman p) 
+	public void PathPac2Fruit(Packman p) 
 	{
-	   double[] pathFun= ShortestPathAlgo.findClosestFruit(p, fruitList);
+		
+	   double[] pathFun= ShortestPathAlgo.findClosestFruit(p, hashAvailableFruit/*fruitList*/);
 	   int idPackman=(int)pathFun[0];
-	   int idxFruit=(int)pathFun[1];
+	   int idFruit=(int)pathFun[1];
 	   double theShortsTime =pathFun[2];
-	   Path path = new Path(idPackman,idxFruit,theShortsTime);
+	   Path path = new Path(idPackman,idFruit,theShortsTime);
 	   allPath.add(path);
 	  
 	}
+private static double[] findClosestFruit(Packman p, HashMap<Integer, Fruit> hashLeftFruits) {
+		// TODO Auto-generated method stub
+	 //ArrayList<Double> arrTimeOfPc= new ArrayList<>();
+	HashMap<Double, Integer> hashTimePc2FruitID = new HashMap<>();
+	 for (Entry<Integer, Fruit> subSet: hashLeftFruits.entrySet()) 
+	 {
+		    final Integer idFruit = subSet.getKey();
+		    final Fruit fruit = subSet.getValue();
+		    
+			double timeP2F=distanceInTimeP2F(p, fruit);
+			hashTimePc2FruitID.put(timeP2F, fruit.GetId());
+			//arrTimeOfPc.add(timeP2F);
+		    //println("\tSub-Edge #" + kk + "\tis " + vv + ".");
+	  }
+	   double theShortsTime=Double.MAX_VALUE;//arrTimeOfPc.get(0);
+	   int idFruit=-1;
+	   //for(int nextTime=1; nextTime<arrTimeOfPc.size(); nextTime++) 
+	   for (Entry<Double, Integer> subSet: hashTimePc2FruitID.entrySet()) 
+		 {
+		   final Double time = subSet.getKey();
+		  
+		   if(time<theShortsTime) 
+		   {
+			   theShortsTime=time;
+			   idFruit = subSet.getValue();
+		   }
+		   
+	    }
+	   double[] pathData= {(int)p.GetId(), (int)idFruit, theShortsTime};
+	   
+	   return pathData;
+	}
+
 //selectpathdata
 	/**
 	 * the function find the closest fruit to the packman
@@ -159,7 +386,7 @@ public class ShortestPathAlgo {
 		   }
 		   
 	    }
-	   double[] pathData= {(int)p.getId(), (int)idxFruit, theShortsTime};
+	   double[] pathData= {(int)p.GetId(), (int)idxFruit, theShortsTime};
 	   
 	   return pathData;
 
@@ -172,17 +399,33 @@ public class ShortestPathAlgo {
     * @param frt-fruit
     * @param time
     */
-	public void setPositionInTime(Path path,Packman pc, Fruit frt,double time)
+	public void SetPosition2Time(Path path,Packman pc, Fruit frt,double time)
 	{
-		double proportionTime=(time-path.getTime0())/(path.getDeltatime()) ;
-		double dx=Math.abs(frt.getlocation().x()-pc.getLocationPoint().x());
-		double dy=Math.abs(frt.getlocation().y()-pc.getLocationPoint().y());
-		double x=pc.getLocationPoint().x()+(proportionTime* dx);
-		double y=pc.getLocationPoint().y()+(proportionTime* dy);
-		 Point newPackman= new Point(MyMap.getPositionOnScreen(x, y));
-		 pc.setLocation(newPackman);
-		 
-	}
+		double proportionTime=(time-path.GetTime0())/(path.GetDeltatime()) ;
+//		if(time==path.GetDeltatime()) 
+//		{
+//			time=path.GetDeltatime();
+//		}
+		double dx=frt.GetPoint3Dlocation().x()-pc.GetPoint3Dlocation().x();//Math.abs(frt.GetPoint3Dlocation().x()-pc.GetPoint3Dlocation().x());
+		double dy=frt.GetPoint3Dlocation().y()-pc.GetPoint3Dlocation().y();//Math.abs(frt.GetPoint3Dlocation().y()-pc.GetPoint3Dlocation().y());
+		double x=pc.GetPoint3Dlocation().x()+(proportionTime* dx);
+		double y=pc.GetPoint3Dlocation().y()+(proportionTime* dy);
+		
+		 Point newPackman= new Point(MyMap.getPositionOnScreen(y, x));
+//		 if((Math.abs(dx)<1) && (Math.abs(dy)<1))
+//		 {
+//			 newPackman.x = frt.GetPointlocation().x; newPackman.y = frt.GetPointlocation().y;
+//		 }else
+		// if(newPackman.x<1498)
+			//{
+			 	pc.SetPointLocation(new Point(newPackman.x,newPackman.y));
+		   //}
+		  // else
+		  // {
+			//	int xx=0;
+			//	xx++;
+			//}
+		} 
 	
  /**
   * The function checks whether the Pacman has reached fruit
@@ -190,7 +433,7 @@ public class ShortestPathAlgo {
   * @param timeTotal
   * @return true if the packman reach the fruit
   */
-	public boolean IsPackmanReachToFruit(double time, double timeTotal)
+	public boolean IsPackmanReachedFruit(double time, double timeTotal)
 	{
 		if(time<timeTotal) 
 		
@@ -198,6 +441,15 @@ public class ShortestPathAlgo {
 			
 			else
 				return true;
+	}
+	public boolean IsPackmanReachedFruit2(Point3D pntPc,Point3D pntFrt,double minDist2Eat )
+	{
+		MyCoords coords = new MyCoords();
+		double disPc2Frt= coords.distance3d(pntPc, pntFrt);
+		if(disPc2Frt>minDist2Eat) 
+			return false;
+		else
+			return true;
 	}
 
 	
@@ -220,9 +472,9 @@ public class ShortestPathAlgo {
 		this.speed = speed;
 	}
 
-	public long getTime() {
-		return getTime();
-	}
+//	public long getTime() {
+//		return getTime();
+//	}
 
 	public void setTime(long gameTimeSec) {
 		this.gameTimeSec = gameTimeSec;
