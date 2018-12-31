@@ -159,32 +159,15 @@ public class MyFrame extends JFrame implements MouseListener
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu"); 
 		Menu menu2= new Menu("File");
-		MenuItem itemRun = new MenuItem("Game Run");
-		MenuItem itemStop = new MenuItem("Game Stop");
+		MenuItem itemRun = new MenuItem("Run Game");
+		MenuItem itemStop = new MenuItem("Stop Game ");
+		MenuItem itemClear=new MenuItem("clear screen");
 		MenuItem itemPackman=new MenuItem("Add Packman");
 		MenuItem itemFruit=new MenuItem("Add Fruit");
-		MenuItem itemClear=new MenuItem("clear screen");
 		MenuItem itemFile= new MenuItem("Load File");
 		MenuItem itemSave= new MenuItem("Save Game");
 		
 		
-//		
-//		gameClear.addActionListener(new ActionListener()
-//        {
-//            @Override
-//            public void actionPerformed(ActionEvent e)
-//            {
-//                clearGame();
-//            }
-//        });
-//		
-//		   public void clearGame()
-//		    {
-//		       this.removeMouseListener(packman);
-//		       this.removeMouseListener(fruit);
-//		       repaint();
-//		    }
-//		
 		ActionListener argFile = new ActionListener() {
 			
 			
@@ -238,16 +221,32 @@ public class MyFrame extends JFrame implements MouseListener
 				pacsTimer.Stop();
 			}
 		};
+		
+		
+		ActionListener argClear = new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                game.clearGame();
+                repaint();
+            }
+        };
+        
+        
 		itemRun.addActionListener(argRun);
 		itemStop.addActionListener(argStop);
+		itemClear.addActionListener(argClear);
 //		itemPackman.addActionListener(argPackman);
 //		itemFruit.addActionListener(argFruit);
 //		itemSave.addActionListener(argSave);
 		itemFile.addActionListener(argFile);
+	
 		menuBar.add(menu);
 		menuBar.add(menu2);
-		menu.add(itemRun);
+		//menu.add(itemRun);
 		menu.add(itemStop);
+		menu.add(itemClear);
 		menu.add(itemPackman);
 		menu.add(itemFruit);
 		menu2.add(itemFile);
