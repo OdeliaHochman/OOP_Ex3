@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.MessageContext.Scope;
@@ -58,7 +59,7 @@ class PacmanTimer
 	public void Start(int pcID, int period) {
 		// TODO Auto-generated method stub
 		timer=new Timer();
-		timer.scheduleAtFixedRate( new PacmanDoTask(m_form,pcID), (long)200* period, (long)200 * period /** 60 * 60 * period*/); 
+		timer.scheduleAtFixedRate( new PacmanDoTask(m_form,pcID), (long)100* period, (long)200 * period /** 60 * 60 * period*/); 
 	}
 	public void Stop() 
 	{
@@ -84,62 +85,34 @@ public class MyFrame extends JFrame implements MouseListener
 	long gameTimeSec = 0;
 	MyMap map= new MyMap();
 	Game game= new Game();
-	//ShortestPathAlgo pathManager= new ShortestPathAlgo(game);
+	public BufferedImage myImage;
 	ShortestPathAlgo pathManager;
 	PacmanTimer pacsTimer = new PacmanTimer(this);
-	
-
 	ArrayList<Point>pnts = new ArrayList<>();
-	//public BufferedImage myImage;
+	Image packmanIcon;
+	BufferedImage packman;
+	private JTextField field;
+
 
 	public MyFrame() 
 	{
-		//InitPnts();
+		
 		initGUI();		
 		this.addMouseListener(this);
 
-		//timerDraw.scheduleAtFixedRate(arg0, arg1, arg2);
 	}
 	public void Repaint() {
-		// TODO Auto-generated method stub
+	
 		gameTimeSec++;
 		boolean ans = pathManager.UpdateGameState(gameTimeSec);
 		if(ans == false)
 			pacsTimer.Stop();
 		repaint();
-		//m_pcID = -1;
-	}
-	private void InitPnts()
-	{
-//		pnts.add(new Point(100,200));
-//		pnts.add(new Point(200,300));
-//		pnts.add(new Point(300,400));
-//		pnts.add(new Point(400,500));
+	
 	}
 
-	private void DrawPC(Graphics g,int index)
-	{
-		if(index!=-1)
-		{
-		
-//			int r = 10;
-//			Point point  = pnts.get(index);
-//			point.x = point.x - (r / 2);
-//			point.y = point.y - (r / 2);
-		}
-	}
 
-	public static void main(String[] args)
-	{
-		
-		MyFrame window = new MyFrame();
-		window.setVisible(true);
-		window.setSize(window.map.GetImage().getWidth(),window.map.GetImage().getHeight());
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-	}
-	Image packmanIcon;
-	BufferedImage packman;
+
 	private void DrawPoints(Graphics g)
 	{
 		g.drawImage(map.GetImage(), 0, 0, this);
@@ -159,18 +132,31 @@ public class MyFrame extends JFrame implements MouseListener
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu"); 
 		Menu menu2= new Menu("File");
-		MenuItem itemRun = new MenuItem("Run Game");
-		MenuItem itemStop = new MenuItem("Stop Game ");
-		MenuItem itemClear=new MenuItem("clear screen");
+		MenuItem itemRun = new MenuItem("Game Run");
+		MenuItem itemStop = new MenuItem("Game Stop");
 		MenuItem itemPackman=new MenuItem("Add Packman");
 		MenuItem itemFruit=new MenuItem("Add Fruit");
+		MenuItem itemClear=new MenuItem("clear screen");
 		MenuItem itemFile= new MenuItem("Load File");
 		MenuItem itemSave= new MenuItem("Save Game");
 		
 		
-		ActionListener argFile = new ActionListener() {
-			
-			
+//		ActionListener argClear = new ActionListener()
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//
+//				game.clearGame();
+//				this.removeMouseListener(argPackman);
+//				this.removeMouseListener(argFruit);
+//				
+//				repaint();
+//			}
+//		};
+		
+		ActionListener argFile = new ActionListener()
+		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -187,12 +173,56 @@ public class MyFrame extends JFrame implements MouseListener
                     repaint();
                     pathManager= new ShortestPathAlgo(game);
                     pathManager.InitShortestPathAlgo();
+                    
+    				if(returnVal == JFileChooser.CANCEL_OPTION)
+    				{
+    					field.setText("cancel");
+    				}
                 
                    
 				}
 				
 			}
 		};
+		
+//		ActionListener argSave = new ActionListener()
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e) 
+//			{
+//
+//				JFileChooser chooser = new JFileChooser();
+//				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
+//				chooser.setFileFilter(filter);
+//				int returnVal = chooser.showOpenDialog(null);
+//				if(returnVal == JFileChooser.APPROVE_OPTION || true)
+//				{
+//					String saveFileName = chooser.getSelectedFile().getPath();
+//					if(saveFileName.endsWith(".csv"))
+//					{
+//						CsvWriter csvWriter = new CsvWriter(saveFileName);
+//					}
+//					else if(saveFileName.endsWith(".kml"))
+//					{
+//						Path2Kml path2Kml= new Path2Kml(saveFileName);
+//					}
+//					else
+//					{
+//						field.setText("File extension must be csv or kml."); ////???
+//					}
+//
+//					pathManager= new ShortestPathAlgo(game);
+//					pathManager.InitShortestPathAlgo();
+//
+//				}
+//				if(returnVal == JFileChooser.CANCEL_OPTION)
+//				{
+//					field.setText("cancel");
+//				}
+//
+//
+//			}
+//		};
 		ActionListener argRun = new ActionListener() {
 
 			@Override
@@ -221,30 +251,15 @@ public class MyFrame extends JFrame implements MouseListener
 				pacsTimer.Stop();
 			}
 		};
-		
-		
-		ActionListener argClear = new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                game.clearGame();
-                repaint();
-            }
-        };
-        
-        
 		itemRun.addActionListener(argRun);
 		itemStop.addActionListener(argStop);
-		itemClear.addActionListener(argClear);
-//		itemPackman.addActionListener(argPackman);
+		itemPackman.addActionListener(argPackman);
 //		itemFruit.addActionListener(argFruit);
 //		itemSave.addActionListener(argSave);
 		itemFile.addActionListener(argFile);
-	
 		menuBar.add(menu);
 		menuBar.add(menu2);
-		//menu.add(itemRun);
+		menu.add(itemRun);
 		menu.add(itemStop);
 		menu.add(itemClear);
 		menu.add(itemPackman);
@@ -253,8 +268,7 @@ public class MyFrame extends JFrame implements MouseListener
 		menu2.add(itemSave);
 		this.setMenuBar(menuBar);
 	
-			//myImage = ImageIO.read(new File("C:\\Ariel1.jpg"));
-			//myImage = ImageIO.read(new File("C:\\Users\\naftali\\eclipse-workspace\\MapEnginePrj\\src\\Ariel1.png"));
+
 		
 	}
 
@@ -277,23 +291,22 @@ public class MyFrame extends JFrame implements MouseListener
 	}
 	public void DrawFruits(Graphics g, ArrayList<Fruit> fruitLst) 
 	{
-//		for (Iterator<Fruit> iterator = fruitLst.iterator(); iterator.hasNext();) {
-//			Fruit fruit = (Fruit) iterator.next();
+
 		for (int idxFrut = 0; idxFrut < fruitLst.size(); idxFrut++) 
 		{
 			if(fruitLst.get(idxFrut)!=null)
 			
 			//fruit.Draw(g);
+		   if(fruitLst.get(idxFrut).Getvisibal()==true) 
+		   {
 			fruitLst.get(idxFrut).Draw(g);
+		   }		
 			
-			else
-				continue;
-	
 		}
 			
 		}
 	
-	public BufferedImage myImage;
+	
 	public void paint(Graphics g)
 	{
 		
@@ -317,25 +330,24 @@ public class MyFrame extends JFrame implements MouseListener
 		
 	}
 	
-//	ActionListener argPackman=new ActionListener() 
-//	{
-//		
-//		@Override
-//		public void actionPerformed(ActionEvent e) 
-//		{
-//
+	ActionListener argPackman=new ActionListener() 
+	{
+		
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+
 //			File f=new File("C:\\pacman.png");
 //			try {
 //		      	 packman = ImageIO.read(f);
-//			//	 packman = ImageIO.read(f);
 //				packman.getScaledInstance(10, 10, 10);
 //			} catch (IOException e1) {
 //				
 //				e1.printStackTrace();
 //			}
-//				
-//			
-//		}
+				
+			
+		}
 	
 		public void Pacman(Graphics g)
 		{
@@ -352,7 +364,18 @@ public class MyFrame extends JFrame implements MouseListener
 		}
 	
 		
-//	};	
+	};	
+		
+		
+		public static void main(String[] args)
+		{
+			
+			MyFrame window = new MyFrame();
+			window.setVisible(true);
+			window.setSize(window.map.GetImage().getWidth(),window.map.GetImage().getHeight());
+			window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+		}
 	
 	@Override
 	public void mouseClicked(MouseEvent arg) 

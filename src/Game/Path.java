@@ -41,8 +41,8 @@ public class Path {
 		this.timeT = DeltaTime-time0;
 		
 	}
-	
-    public int GetIDPackman() 
+
+	public int GetIDPackman() 
     {
     	return idPackman;
     }

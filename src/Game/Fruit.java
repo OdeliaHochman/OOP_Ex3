@@ -16,6 +16,7 @@ public class Fruit extends MapObject {
 	
 	
 	private int weight;
+	private boolean visible=true;
 	
 
 	/**
@@ -55,7 +56,16 @@ public class Fruit extends MapObject {
 //	}
 
 
+	public boolean Getvisibal() 
+	{
+		return this.visible;
+	}
 	
+	public void SetVisible(boolean visible) 
+	{
+		 this.visible=visible;
+	}
+   
    
 	public void SetWeight(int weight) 
 	{

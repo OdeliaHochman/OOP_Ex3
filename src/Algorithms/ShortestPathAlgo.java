@@ -33,7 +33,7 @@ import java.awt.Point;
 public class ShortestPathAlgo {
 
 	private Game game;
-	private Path path;
+	public Path path;
 	private double speed;
 	private long gameTimeSec;
 	ArrayList<Packman> packmanList;
@@ -43,6 +43,7 @@ public class ShortestPathAlgo {
 	private HashMap<Integer,Packman> hashAvailablePackman = new HashMap<>();
 	//double timeTotal = path.getTime0()+path.getDeltatime();//efrat 24.12.18
 	Solution allPath = new Solution();
+	//Path newPath=new Path();
     private int nAvailableFruit =0;
 
 	
@@ -61,11 +62,27 @@ public class ShortestPathAlgo {
 		  hashAvailablePackman.put(pc.GetId(),pc);
 		}
 	}
+	
+	private void RemoveFruit(int idPc, int idFrut) 
+	{
+		Packman pcTst = hashAvailablePackman.get(idPc);
+		
+		if(hashAvailableFruit.containsKey(idFrut))
+		{
+			Fruit frtTst = hashAvailableFruit.get(idFrut);
+			pcTst.SetPointLocation(frtTst.GetPointlocation());
+		  //hashAvailableFrt.remove(idxFrut);
+		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
+		  //nAvailableFruit = hashAvailableFruit.size();
+	
+		}
+	}
 	private void InitFruitsLocation()
 	{
 		for (int index =0; index< fruitList.size();index++) 
 		{
 		 //hashAvailableFrt.add(index);
+		 
 		  Fruit frt = this.fruitList.get(index);
 		  hashAvailableFruit.put(frt.GetId(),new Fruit(frt));
 		}
@@ -77,9 +94,10 @@ public class ShortestPathAlgo {
 		Fruit frt = hashAvailableFruit.get(idFrut);
 		Packman pc = hashAvailablePackman.get(idPc);
 		boolean ans2= false;
-		if(frt!=null&&pc!=null)
+		if(frt!= null&&pc!= null)
 		{
-			ans2 =	IsPackmanReachedFruit2(pc.GetPoint3Dlocation(),frt.GetPoint3Dlocation(),1);
+			ans2 =	IsPackmanReachedFruit2(pc.GetPoint3Dlocation(),
+				frt.GetPoint3Dlocation(),1);
 		}
 		return ans1||ans2;
 	}
@@ -96,20 +114,23 @@ public class ShortestPathAlgo {
 		}
 		return ans1||ans2;
 	}
-	void EatFruit(int idPc,int idFrut)
+	public void EatFruit(Fruit idFrut)
 	{
-		Packman pcTst = hashAvailablePackman.get(idPc);
+		idFrut.SetVisible(false);
 		
-		if(hashAvailableFruit.containsKey(idFrut))
-		{
-			Fruit frtTst = hashAvailableFruit.get(idFrut);
-			pcTst.SetPointLocation(frtTst.GetPointlocation());
-		  //hashAvailableFrt.remove(idxFrut);
-		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
-		  //nAvailableFruit = hashAvailableFruit.size();
-		  
-			
-		}
+		
+//		Packman pcTst = hashAvailablePackman.get(idPc);
+//		
+//		if(hashAvailableFruit.containsKey(idFrut))
+//		{
+//			Fruit frtTst = hashAvailableFruit.get(idFrut);
+//			pcTst.SetPointLocation(frtTst.GetPointlocation());
+//		  //hashAvailableFrt.remove(idxFrut);
+//		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
+//		  //nAvailableFruit = hashAvailableFruit.size();
+//		  
+//			
+//		}
 	}
 	public void InitShortestPathAlgo()
 	{
@@ -158,7 +179,7 @@ public class ShortestPathAlgo {
 				//if(ans==false)
 				if(ans== true)
 				{
-					EatFruit(idPc,idFrut);
+					RemoveFruit(idPc,idFrut);
 					nAvailableFruit--;
 					if(nAvailableFruit == 0)//no more fruits to eat
 					{
@@ -220,64 +241,100 @@ public class ShortestPathAlgo {
 		 {
 			  //final Integer idFrt = subSet.getKey();
 			  final Fruit frt = subSet.getValue();
-			  fruitList.add(new Fruit(frt));
+			  fruitList.add(frt);
 		 }
-		int x=0;
-		x++;
+		
 	}
-	public boolean  UpdateGameState(double gameTimeSec)
+	
+	
+	
+	public boolean UpdateGameState(double gameTimeSec)
 	{
-		for (Iterator iterator = packmanList.iterator(); iterator.hasNext();) {
+		for (Iterator<Packman> iterator = packmanList.iterator(); iterator.hasNext();)
+		{
 			Packman pc = (Packman) iterator.next();
-			Path currPath = GetPackCurrentPath(pc,gameTimeSec);
+			Path currPath= allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
+			boolean bCurrPathChange = GetPackCurrentPath(pc,gameTimeSec,currPath);
 			if(currPath!=null)
 			{
 			   Fruit frt = hashAvailableFruit.get(currPath.GetIDFruit());
 			   if(frt == null)
 			   {
 				   pc.IncreasePathIndex();
-				   currPath = GetPackCurrentPath(pc,gameTimeSec);
+				   bCurrPathChange = GetPackCurrentPath(pc,gameTimeSec,currPath);
 				   frt = hashAvailableFruit.get(currPath.GetIDFruit());
 			   }
+			
 			   SetPosition2Time(currPath, pc, frt, gameTimeSec);
-			   boolean ans = IsEatable2(pc.GetId(),frt.GetId(),currPath.GetTimeT());
+			  // boolean ans = IsEatable2(pc.GetId(),frt.GetId(),currPath.GetTimeT());
 				//if(ans==false)
-				if(ans== true)
+			
+				if(bCurrPathChange==true)
 				{
-					//EatFruit(pc.GetId(),frt.GetId());
-					//UpadteFruitsArray();
-					//pc.IncreasePathIndex();
-//					nAvailableFruit--;
-//					if(nAvailableFruit == 0)//no more fruits to eat
-//					{
-//						break;
-//					}
-				}
-			}
+					EatFruit(frt);
+					UpadteFruitsArray();
+					
+
+			    }
+			}	
 		}
+	
+		
 		if(hashAvailableFruit.size()>0)
+		
 			return true;
+		
 		else
 			return false;
-		
 	}
-
-	private Path GetPackCurrentPath(Packman pc,double gameTimeSec) {
+	
 		
-		Path path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
+		
+
+
+	
+//  private Path GetPackCurrentPath(Packman pc,double gameTimeSec) {
+//		
+//		Path path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
+//		if(path != null&& pc!=null)
+//		{
+//			if(gameTimeSec < path.GetTimeT())//if time in path, get current path;
+//			   return path;
+//			else
+//			{
+//				pc.IncreasePathIndex();// get next path
+//				path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
+//				return path;
+//			}
+//		}
+//		return null;
+//	}
+
+	
+	private boolean GetPackCurrentPath(Packman pc,double gameTimeSec, Path path) 
+	{
+		
+		boolean bchangePath=false;
+		path = allPath.GetPath(pc.GetId(),pc.GetCurrentPathIndex());
 		if(path != null&& pc!=null)
 		{
 			if(gameTimeSec < path.GetTimeT())//if time in path, get current path;
-			   return path;
-			else
+			{
+			   return bchangePath;
+		    }
+		    else
 			{
 				pc.IncreasePathIndex();// get next path
-				path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
-				return path;
-			}
-		}
-		return null;
+				path  = allPath.GetPath(pc.GetId(),pc.GetCurrentPathIndex());
+				
+				 bchangePath=true;
+				return bchangePath;	
+	        }
+        }
+		return bchangePath;
 	}
+	
+
 
 	/**
 	 * Route allocation

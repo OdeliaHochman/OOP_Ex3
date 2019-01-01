@@ -22,7 +22,6 @@ public class Game
 {
 	ArrayList<Packman> packmansOnMap;
 	ArrayList<Fruit> fruitsOnMap;
-
 	
 	
 
@@ -124,7 +123,12 @@ public class Game
 		return fruitsOnMap.size();
 	}
 	
-	
+//	public static void main(String[] args) 
+//	{
+//		Game game= new Game();
+//	
+//	}
+//	
 	public void removeFruit(Fruit f)
 	{
 		fruitsOnMap.remove(f);
@@ -132,11 +136,6 @@ public class Game
 	public void removePackman(Packman p)
 	{
 		packmansOnMap.remove(p);
-	}
-	public void clearGame()
-	{
-		this.packmansOnMap.clear();
-		this.fruitsOnMap.clear();
 	}
 
 
