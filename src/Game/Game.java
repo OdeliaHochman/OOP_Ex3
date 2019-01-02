@@ -90,6 +90,10 @@ public class Game
 	 */
 	public void AddPackman(Packman packman) 
 	{
+		if(packmansOnMap==null) 
+		{
+			 packmansOnMap= new ArrayList<>();
+		}
 		packmansOnMap.add(packman);
 	}
 
@@ -99,6 +103,10 @@ public class Game
 	 */
 	public void AddFruit(Fruit fruit) 
 	{
+		if(fruitsOnMap==null) 
+		{
+			 fruitsOnMap= new ArrayList<>();
+		}
 		fruitsOnMap.add(fruit);
 	}
 	
@@ -123,7 +131,12 @@ public class Game
 		return fruitsOnMap.size();
 	}
 	
-
+//	public static void main(String[] args) 
+//	{
+//		Game game= new Game();
+//	
+//	}
+//	
 	public void removeFruit(Fruit f)
 	{
 		fruitsOnMap.remove(f);
@@ -133,13 +146,11 @@ public class Game
 		packmansOnMap.remove(p);
 	}
 	
-		
 	public void clearGame()
 	{
 		this.packmansOnMap.clear();
 		this.fruitsOnMap.clear();
 	}
-
 
 }
 

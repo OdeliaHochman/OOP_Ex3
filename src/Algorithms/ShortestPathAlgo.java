@@ -51,6 +51,7 @@ public class ShortestPathAlgo {
 	public ShortestPathAlgo(Game game) 
 	{
 		this.game=game;
+		//this.InitShortestPathAlgo();
 		
 	}
 
@@ -71,9 +72,7 @@ public class ShortestPathAlgo {
 		{
 			Fruit frtTst = hashAvailableFruit.get(idFrut);
 			pcTst.SetPointLocation(frtTst.GetPointlocation());
-		  //hashAvailableFrt.remove(idxFrut);
-		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
-		  //nAvailableFruit = hashAvailableFruit.size();
+		   hashAvailableFruit.remove(idFrut);
 	
 		}
 	}

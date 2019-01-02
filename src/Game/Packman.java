@@ -100,16 +100,11 @@ public class Packman extends MapObject {
 
 	MyMap map= new MyMap();
 	Image packmenIcon;          
-      public void Draw(Graphics g,Color color) 
+      public void Draw(Graphics g) 
     {
-    	   	g.setColor(/*Color.red*/color);
+    	   	g.setColor(Color.red);
         	
-     
-      //	packmenIcon = Toolkit.getDefaultToolkit().getImage("C:\\pacman.png");
-      //	g.drawImage(packmenIcon,x_pacman, y_pacman, 28, 28,this);
-      	 
-      	//Point pixel=Map.getPositionOnScreen(this.locationPoint.x(), this.locationPoint.y());
-  		g.fillOval(super.GetPointlocation().x,super.GetPointlocation().y,20,20);
+   	g.fillOval(super.GetPointlocation().x,super.GetPointlocation().y,40,40);
         
     }
 }
