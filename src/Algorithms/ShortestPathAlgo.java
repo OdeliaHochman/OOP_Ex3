@@ -36,12 +36,12 @@ public class ShortestPathAlgo {
 	public Path path;
 	private double speed;
 	private long gameTimeSec;
-	ArrayList<Packman> packmanList;
+	static ArrayList<Packman> packmanList;
 	ArrayList<Fruit>fruitList;
 	//private HashSet<Integer> hashAvailableFrt = new HashSet<>();
 	private HashMap<Integer,Fruit> hashAvailableFruit = new HashMap<>();
 	private HashMap<Integer,Packman> hashAvailablePackman = new HashMap<>();
-	//double timeTotal = path.getTime0()+path.getDeltatime();//efrat 24.12.18
+	static //double timeTotal = path.getTime0()+path.getDeltatime();//efrat 24.12.18
 	Solution allPath = new Solution();
 	//Path newPath=new Path();
     private int nAvailableFruit =0;
@@ -51,8 +51,8 @@ public class ShortestPathAlgo {
 	public ShortestPathAlgo(Game game) 
 	{
 		this.game=game;
-		//this.InitShortestPathAlgo();
-		
+		//InitPacmansLocation();
+		InitShortestPathAlgo();
 	}
 
 	private void InitPacmansLocation()
@@ -72,7 +72,9 @@ public class ShortestPathAlgo {
 		{
 			Fruit frtTst = hashAvailableFruit.get(idFrut);
 			pcTst.SetPointLocation(frtTst.GetPointlocation());
-		   hashAvailableFruit.remove(idFrut);
+		  //hashAvailableFrt.remove(idxFrut);
+		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
+		  //nAvailableFruit = hashAvailableFruit.size();
 	
 		}
 	}
@@ -134,48 +136,41 @@ public class ShortestPathAlgo {
 	public void InitShortestPathAlgo()
 	{
 		gameTimeSec =0;
-		//setSpeed(speed);
 		setTime(gameTimeSec);
-		this.fruitList=game.getArrListFruit();
-		this.packmanList=game.getArrListPac();
+		this.fruitList=game.GetArrListFruit();
+		this.packmanList=game.GetArrListPac();
 		
 		for (int index =0; index< packmanList.size();index++) 
 		{
-		 //hashAvailableFrt.add(index);
 		  Packman pc = this.packmanList.get(index);	
 		  hashAvailablePackman.put(pc.GetId(),new Packman(pc));
 		}
 		
 		for (int index =0; index< fruitList.size();index++) 
 		{
-		 //hashAvailableFrt.add(index);
 		  Fruit frt = this.fruitList.get(index);
 		  hashAvailableFruit.put(frt.GetId(),new Fruit(frt));
 		}
+		
 		nAvailableFruit = hashAvailableFruit.size();
-		int nMinFruits =54;
+		
 		while(nAvailableFruit>0) 
 		{
-			
-			//nAvailableFruit = hashAvailableFruit.size();
-			//if(nAvailableFruit == nMinFruits)
-				//break;
 			if(gameTimeSec == 0)
 				InitPathes();
+			
 			gameTimeSec++;
+			
 			for (Entry<Integer, Packman> subSet: hashAvailablePackman.entrySet()) 
 			 {
-				  final Integer idPc = subSet.getKey();
-				  final Packman pac = subSet.getValue();
-			//for (int idxPc = 0; idxPc < packmanList.size(); idxPc++) 
-			//{
+				final Integer idPc = subSet.getKey();
+				 //final Packman pac = subSet.getValue();
 				Path path = allPath.GetLastPath(idPc);
 				int idFrut = path.GetIDFruit();
 				double pathTotalTime = path.GetTimeT();
-				
-				//boolean ans= IsPackmanReachToFruit(getTime(),timeTotal);//efrat 24.12.18
+
 				boolean ans = IsEatable(idPc,idFrut,pathTotalTime);
-				//if(ans==false)
+				
 				if(ans== true)
 				{
 					RemoveFruit(idPc,idFrut);
@@ -184,18 +179,7 @@ public class ShortestPathAlgo {
 					{
 						break;
 					}
-					//hashAvailableFrt.remove(fruitList.get(idxPc));
 					
-//					if(pcTst.GetPointlocation().y >=2147483647)
-//				    {
-//				    	int x=0;
-//				    	x++;
-//				    }
-//					if(nAvailableFruit == 1)
-//					{
-//						int x=0;
-//				    	x++;
-//					}
 					PathPac2Fruit(hashAvailablePackman.get(idPc));	
 				}
 				else
@@ -216,12 +200,7 @@ public class ShortestPathAlgo {
 								PathPac2Fruit(hashAvailablePackman.get(idPc));
 					}
 				}
-				if(gameTimeSec == 76)
-				{
-					int x =0;
-				    x++;
-				}
-				//gameTimeSec++;
+		
 			}
 		}
 		int x =0;
@@ -482,6 +461,15 @@ private static double[] findClosestFruit(Packman p, HashMap<Integer, Fruit> hash
 			//	xx++;
 			//}
 		} 
+	static int idx=0;
+
+	public static String ToStringAlgo() 
+	{
+		String s=allPath.GetPath(packmanList.get(idx).GetId(), packmanList.get(idx).GetCurrentPathIndex()).toString();
+		idx++;
+		
+		return s;
+	}
 	
  /**
   * The function checks whether the Pacman has reached fruit

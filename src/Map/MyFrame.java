@@ -1,14 +1,15 @@
 package Map;
 
 import java.awt.Color;
-
 import Game.Fruit;
 import Game.Game;
 import Game.Packman;
 import Game.Path;
+import Game.Solution;
 import Geom.Point3D;
-
 import Map.MyMap;
+import Map.MyFrame.GameObjectType;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Menu;
@@ -20,13 +21,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.Socket;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -78,19 +78,24 @@ class PacmanTimer
 class PacmanDoTask extends TimerTask {
 	MyFrame m_form  = null;
 	int m_pcID = -1;
+	Game game= new Game();
+	int idx=0;
+	ArrayList<Packman> pac = game.GetArrListPac();
+	ArrayList<Fruit> frt = game.GetArrListFruit();
 	PacmanDoTask(MyFrame form,int pcID){m_form = form;m_pcID = pcID;}
 	public void run() 
 	{
-		//System.out.println("PC ID "+ m_pcID);
-		//System.out.println("time start:"+ );
-	//	System.out.println("time start:"+ path.GetTime0()+ " ," + "get timeT:"+ path.GetTimeT() +", " + path.GetDeltatime());
-
+		
+	//	System.out.println("PC ID "+ m_pcID);
+	//	Path path= new Path(game.GetArrListFruit().get(idx).GetId(),game.GetArrListFruit().get(idx).GetId(),sl.GetPath(idx, idx).GetDeltatime());
+       //System.out.println(ShortestPathAlgo.ToStringAlgo());
 		m_form.Repaint();
 		//code to send SMS.
 	}
 }
 
-public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
+
+public class MyFrame extends JFrame implements MouseListener
 {
 	long gameTimeSec = 0;
 	MyMap map= new MyMap();
@@ -98,13 +103,14 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 	public BufferedImage myImage;
 	ShortestPathAlgo pathManager;
 	PacmanTimer pacsTimer = new PacmanTimer(this);
-	ArrayList<Point>pnts = new ArrayList<>();
+	//ArrayList<Point>pnts = new ArrayList<>();
     public  enum GameObjectType {PackmanType,FruitType,Undefined};
     GameObjectType gameType2Add =GameObjectType.PackmanType;
 	Image packmanIcon;
 	BufferedImage packman;
 	private JTextField field;
-
+	private int idxP=0;
+	private int idxF=0;
 
 	public MyFrame() 
 	{
@@ -127,15 +133,15 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 
 	private void DrawPoints(Graphics g)
 	{
-		g.drawImage(map.GetImage(), 0, 0, this);
-		g.drawImage(packman, 10, 10, this);
-		for (Point point : pnts) {
-			if(x!=-1 && y!=-1)
-			{
-				int r =30;
-				g.fillOval(point.x, point.y, r, r);
-			}
-		}
+//		g.drawImage(map.GetImage(), 0, 0, this);
+//		g.drawImage(packman, 10, 10, this);
+//		for (Point point : pnts) {
+//			if(x!=-1 && y!=-1)
+//			{
+//				int r =30;
+//				g.fillOval(point.x, point.y, r, r);
+//			}
+//		}
 
 	}
 	private void initGUI() 
@@ -148,30 +154,19 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 		MenuItem itemStop = new MenuItem("Game Stop");
 		MenuItem itemPackman=new MenuItem("Add Packman");
 		MenuItem itemFruit=new MenuItem("Add Fruit");
-		//MenuItem itemClear=new MenuItem("clear screen");
+		MenuItem itemClear=new MenuItem("Clear Screen");
 		MenuItem itemFile= new MenuItem("Load File");
 		MenuItem itemSave= new MenuItem("Save Game");
 		
-		
-		ActionListener argClear = new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-
-				game.clearGame();
-				//this.removeMouseListener(argPackman);
-				//this.removeMouseListener(argFruit);
-				
-				repaint();
-			}
-		};
 		
 		ActionListener argFile = new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
+				
+				if(e.getActionCommand()=="Load File")
+				{
 				JFileChooser chooser = new JFileChooser();
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
 				chooser.setFileFilter(filter);
@@ -180,25 +175,29 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 			
 				{
 					String csvFileName = chooser.getSelectedFile().getPath();
+					//String csvFileName="game_1543693911932.csv";
 					game.LoadCsv(csvFileName);
-					
 				    System.out.println("You chose to open file: " + chooser.getSelectedFile().getName());
-				    repaint();
-				    
+                    repaint();
                    pathManager= new ShortestPathAlgo(game);
-                    pathManager.InitShortestPathAlgo();
-				   
+                   pathManager.InitShortestPathAlgo();
+                   
                     
     				if(returnVal == JFileChooser.CANCEL_OPTION)
     				{
     					field.setText("cancel");
     				}
-    				
-                
-                   
+    				 
 				}
 				
 			}
+			else 
+			if(e.getActionCommand()=="Save Game")
+			{
+				String csvFileName="f16.csv";//"game_1543693911932_save1.csv";
+				game.UpLoadCsv(csvFileName);
+			}
+		  }
 		};
 		
 //		ActionListener argSave = new ActionListener()
@@ -246,13 +245,13 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 				// TODO Auto-generated method stub
 				int a = 0;
 				a++;
-				System.out.println("menue a Clicked");
+				//System.out.println(packman.toString());
 				x = 500;
 				y = 500;
 				if(pathManager == null)
 					pathManager= new ShortestPathAlgo(game);
-		             pathManager.InitShortestPathAlgo();
-		             
+				
+		        //pathManager.InitShortestPathAlgo();
 				pacsTimer.Start(1, 2);
 				
 				
@@ -276,13 +275,14 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 //		itemClear.addActionListener(argClear);
 		itemPackman.addActionListener(userSelectionListener);
 		itemFruit.addActionListener(userSelectionListener);
-//		itemSave.addActionListener(argSave);
+		itemSave.addActionListener(argFile);
 		itemFile.addActionListener(argFile);
+		itemClear.addActionListener(userSelectionListener);
 		menuBar.add(menu);
 		menuBar.add(menu2);
 		menu.add(itemRun);
 		menu.add(itemStop);
-		//menu.add(itemClear);
+		menu.add(itemClear);
 		menu.add(itemPackman);
 		menu.add(itemFruit);
 		menu2.add(itemFile);
@@ -298,11 +298,17 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 
 	public void DrawPackmans(Graphics g, ArrayList<Packman> packmanLst) 
 	{
+		Color clrOld = g.getColor();
+		Color[] clrs =  new Color[] {Color.BLUE,Color.CYAN,Color.RED};
+		int idxColor =0;
 		for (Iterator<Packman> iterator = packmanLst.iterator(); iterator.hasNext();) {
 			Packman packman = (Packman) iterator.next();
-			
-			packman.Draw(g);
+			Color color = (clrs[idxColor]);
+			packman.Draw(g,color);
+			idxColor++;
+			idxColor%=3;
 		}
+		g.setColor(clrOld);
 		
 		
 	}
@@ -340,10 +346,10 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 //				y = y - (r / 2);
 //				g.fillOval(x, y, 10, 10);
 					
-		ArrayList<Packman> packmanLst= game.getArrListPac();
+		ArrayList<Packman> packmanLst= game.GetArrListPac();
 		if(packmanLst!=null) 
 		DrawPackmans(g,packmanLst);
-		ArrayList<Fruit> fruitLst= game.getArrListFruit();	
+		ArrayList<Fruit> fruitLst= game.GetArrListFruit();	
 		if(fruitLst!=null)
 		DrawFruits(g,fruitLst);
 		
@@ -354,7 +360,13 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 		
 		@Override
 		public void actionPerformed(ActionEvent e) 
-		{
+		{ 
+			//repaint()
+			if(e.getActionCommand().equals("Clear Screen"))
+			{
+				game.ClearGame();
+				repaint();
+			}
 			
 			if(e.getActionCommand().equals("Add Packman"))
 			{
@@ -393,8 +405,6 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 		Point pnt= new Point(x, y);
 		//convert for Lat Lon
 		Point3D pnt3D= new Point3D(MyMap.getPositionOnMap(pnt));
-		int idxP=0;
-		int idxF=0;
 		switch(gameType2Add)
 		{
 			case PackmanType:
@@ -422,7 +432,7 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		System.out.println("mouse entered");
+		//System.out.println("mouse entered");
 
 	}
 
@@ -442,10 +452,6 @@ public class MyFrame extends JFrame implements MouseListener, MouseWheelListener
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
-	}
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		
 	}
 
 

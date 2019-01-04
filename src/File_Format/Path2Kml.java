@@ -1,16 +1,16 @@
 package File_Format;
 
-import java.io.BufferedReader;
-import GIS.Meta_data;
+//import java.io.BufferedReader;
+//import GIS.Meta_data;
 import java.io.BufferedWriter;
-import java.io.FileReader;
+//import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import javax.swing.text.Element;
-import GIS.GIS_element;
-import java.security.Timestamp;
+//import java.util.Iterator;
+//import javax.swing.text.Element;
+//import GIS.GIS_element;
+//import java.security.Timestamp;
 
 public class Path2Kml {
 
@@ -50,7 +50,7 @@ public class Path2Kml {
                     		+"<description>"+s[1]+","+s[5]+","+s[6]+"</description>\n"
                     		+"<styleUrl>#red</styleUrl>"
                     		+"<Point>\n"
-                    		+"<coordinates>"+s[2]+s[3]+s[4]+"</coordinates>\n"
+                    		+"<coordinates>"+s[3]+s[2]+s[4]+"</coordinates>\n"
                     		+"</Point>\n"
                     		//+"<TimeStamp>"+s[3]+"</TimeStamp>\n" 
                     		+"<TimeStamp>\n"+

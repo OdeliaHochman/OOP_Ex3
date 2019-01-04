@@ -57,28 +57,53 @@ public class MyCoords implements coords_converter {
 	@Override
 	public double distance3d(Point3D gps0, Point3D gps1) {
 
-		if(!isValid_GPS_Point(gps0) || !isValid_GPS_Point(gps1))
+//		if(!isValid_GPS_Point(gps0) || !isValid_GPS_Point(gps1))
+//		{
+//			throw new RuntimeException("Error: GPS point values are invalid");
+//		}
+//		else
 		{
-			throw new RuntimeException("Error: GPS point values are invalid");
-		}
-		else
-		{
-			double diffLat= gps1.x()-gps0.x();
-			double diffLon= gps1.y()-gps0.y();
+			double diffLat= gps1.y()-gps0.y();
+			double diffLon= gps1.x()-gps0.x();
 
 			double radLat=diffLat*Math.PI/180;  //radian
 			double radLon= diffLon*Math.PI/180; //radian
 
 			double lonNorm=Math.cos(gps0.x()*Math.PI/180);  
 
-			double meterLat=Math.sin(radLat)*RADIUS_EARTH;
-			double meterLon=Math.sin(radLon)*RADIUS_EARTH*lonNorm;
+			double meterLat=Math.sin(radLat)*RADIUS_EARTH*lonNorm;
+			double meterLon=Math.sin(radLon)*RADIUS_EARTH;
 
 			double distance= Math.sqrt(Math.pow(meterLon,2) + Math.pow(meterLat, 2));
 			return distance;
 		}
 
 	}
+	
+//	public double distance3d(Point3D gps0, Point3D gps1) {
+//
+//		if(!isValid_GPS_Point(gps0) || !isValid_GPS_Point(gps1))
+//		{
+//			throw new RuntimeException("Error: GPS point values are invalid");
+//		}
+//		else
+//		{
+//			double diffLat= gps1.x()-gps0.x();
+//			double diffLon= gps1.y()-gps0.y();
+//
+//			double radLat=diffLat*Math.PI/180;  //radian
+//			double radLon= diffLon*Math.PI/180; //radian
+//
+//			double lonNorm=Math.cos(gps0.x()*Math.PI/180);  
+//
+//			double meterLat=Math.sin(radLat)*RADIUS_EARTH;
+//			double meterLon=Math.sin(radLon)*RADIUS_EARTH*lonNorm;
+//
+//			double distance= Math.sqrt(Math.pow(meterLon,2) + Math.pow(meterLat, 2));
+//			return distance;
+//		}
+//
+//	}
 
 	/**
 	 * the function computes the 3D vector (in meters) between two gps like points 
@@ -168,15 +193,26 @@ public class MyCoords implements coords_converter {
 	 * @return
 	 */
 	@Override
+	
 	public boolean isValid_GPS_Point(Point3D p)
 	{
 
-		if(p.y()<-180 || p.y()>180 || p.x()<-90 || p.x()>90 || p.z()<-450 )
+		if(p.x()<-180 || p.x()>180 || p.y()<-90 || p.y()>90 || p.z()<-450 )
 		{
 			return false;
 		}
 		return true;
 	}
+	
+//	public boolean isValid_GPS_Point(Point3D p)
+//	{
+//
+//		if(p.y()<-180 || p.y()>180 || p.x()<-90 || p.x()>90 || p.z()<-450 )
+//		{
+//			return false;
+//		}
+//		return true;
+//	}
 
 
 }

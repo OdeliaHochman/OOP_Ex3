@@ -3,14 +3,6 @@ package Game;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
 import Map.MyMap;
 import Geom.Point3D;
 import java.awt.Point;
@@ -25,7 +17,6 @@ public class Fruit extends MapObject {
 	
 	private int weight;
 	private boolean visible=true;
-	public BufferedImage fruitImage;
 	
 
 	/**
@@ -92,16 +83,19 @@ public class Fruit extends MapObject {
 		return s;
 	}
 	
+	public String [] ToStringArr() 
+	{
+		char type='F';
+		int alt=0;
+		String [] sFrutArr= new String[] {String.valueOf(type),String.valueOf(super.GetId()),String.valueOf(super.GetPoint3Dlocation().y()),String.valueOf(super.GetPoint3Dlocation().x()) ,String.valueOf(alt) ,String.valueOf(weight)}; 
+		return sFrutArr;
+	}
 	
 	   public void Draw(Graphics g) 
 	    {
 	    	g.setColor(Color.green);
+	    	//Point pixel=Map.getPositionOnScreen(this.location.x(), this.location.y())
+			g.fillOval(super.GetPointlocation().x, super.GetPointlocation().y,10, 10);
 
-			g.fillOval(super.GetPointlocation().x, super.GetPointlocation().y,15, 15);
-			
-			
-	   
-	   
 	    }
-	   
 }

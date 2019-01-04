@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import File_Format.CSVReader;
+import File_Format.csvWriter;
 
 /**
  * A class that includes a collection of fruit and a collection of robots, 
@@ -23,20 +24,55 @@ public class Game
 	ArrayList<Packman> packmansOnMap;
 	ArrayList<Fruit> fruitsOnMap;
 	
-	
-
     void ReadCSV(String csvFileName)
     {
+    	boolean bIsTitle=true;
    	 ArrayList<String[]> alCsvData = CSVReader.ReadFile(csvFileName);
-   	 for (Iterator<String[]> iterator = alCsvData.iterator(); iterator.hasNext();) {
+   	 for (Iterator<String[]> iterator = alCsvData.iterator(); iterator.hasNext();) 
+   	 {
+   		 if(!bIsTitle)
+   		 {
 			String[] strings = (String[]) iterator.next();
-			AddGameItem(strings);
-			
-			
+			AddGameItem(strings);	
 		}
-   	 
-   	 
+   		 
+   		 else
+   			 
+   			 bIsTitle=false;
+   	 }
+     }
+    
+    public void UpLoadCsv(String csvFileName) 
+	{
+		ArrayList<String[]> al = BuidPackAndFruitList(packmansOnMap,fruitsOnMap);
+		SaveCsv(al,csvFileName);
+		//ReadCSV(str);
+	}
+    
+    public ArrayList<String[]> BuidPackAndFruitList(ArrayList<Packman> packmansOnMap,ArrayList<Fruit>fruitsOnMap)
+	{
+		ArrayList<String[]> alPackAndFruit= new ArrayList<>();
+		
+		for (Packman pac : packmansOnMap) 
+		{
+			
+			alPackAndFruit.add(pac.ToStringArr());
+		}
+		
+		for (Fruit frt : fruitsOnMap) 
+		{
+			alPackAndFruit.add(frt.ToStringArr());
+		}
+		
+		
+		return alPackAndFruit;
+	}
+    
+    void SaveCsv(ArrayList<String[]> al,String csvFileName)
+    {
+    	csvWriter.WriteFile(csvFileName, al);
     }
+    
      void  AddGameItem(String[] objString)
      {
 
@@ -90,10 +126,8 @@ public class Game
 	 */
 	public void AddPackman(Packman packman) 
 	{
-		if(packmansOnMap==null) 
-		{
-			 packmansOnMap= new ArrayList<>();
-		}
+		if(packmansOnMap == null)
+			packmansOnMap = new ArrayList<>();
 		packmansOnMap.add(packman);
 	}
 
@@ -103,30 +137,28 @@ public class Game
 	 */
 	public void AddFruit(Fruit fruit) 
 	{
-		if(fruitsOnMap==null) 
-		{
-			 fruitsOnMap= new ArrayList<>();
-		}
+		if(fruitsOnMap == null)
+			fruitsOnMap = new ArrayList<>();
 		fruitsOnMap.add(fruit);
 	}
 	
 	
-	public ArrayList<Packman> getArrListPac() 
+	public ArrayList<Packman> GetArrListPac() 
 	{
 		return this.packmansOnMap;
 	}
 	
-	public ArrayList<Fruit> getArrListFruit() 
+	public ArrayList<Fruit> GetArrListFruit() 
 	{
 		return this.fruitsOnMap;
 	}
 	
-	public int getSizeOfArrPackman() 
+	public int GetSizeOfArrPackman() 
 	{
 		return packmansOnMap.size();
 	}
 	
-	public int getSizeOfArrFruit() 
+	public int GetSizeOfArrFruit() 
 	{
 		return fruitsOnMap.size();
 	}
@@ -137,16 +169,16 @@ public class Game
 //	
 //	}
 //	
-	public void removeFruit(Fruit f)
+	public void RemoveFruit(Fruit f)
 	{
 		fruitsOnMap.remove(f);
 	}
-	public void removePackman(Packman p)
+	public void RemovePackman(Packman p)
 	{
 		packmansOnMap.remove(p);
 	}
 	
-	public void clearGame()
+	public void ClearGame()
 	{
 		this.packmansOnMap.clear();
 		this.fruitsOnMap.clear();

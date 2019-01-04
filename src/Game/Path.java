@@ -19,7 +19,7 @@ import Algorithms.ShortestPathAlgo;
 public class Path {
 
 
-	ArrayList<Fruit> fruitList = new ArrayList<>();
+	//ArrayList<Fruit> fruitList = new ArrayList<>();
 	private double time0 = 0;
 	private double timeT = -1;
 	private double DeltaTime = -1;
@@ -79,7 +79,7 @@ public class Path {
 
 	public String toString()
 	{
-		return "Path:\n packman ID: " + idPackman +"Fruit ID: "+ idFruit+", time total:" + timeT + ", Packman start time:" + time0 +"delta time:"+DeltaTime;
+		return "Path:\n packman ID: " + idPackman +", Fruit ID: "+ idFruit+", time total:" + timeT + ", Packman start time:" + time0 + ", delta time:"+DeltaTime;
 	}
 
 }

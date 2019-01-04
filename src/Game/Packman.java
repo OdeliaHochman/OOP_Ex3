@@ -19,7 +19,7 @@ import Map.MyMap;
 public class Packman extends MapObject {
 
 	
-	private double speed;
+	private int speed;
 	private int radius;
 	private double timeInPath;
 	private int pathIdx =0;
@@ -35,7 +35,7 @@ public class Packman extends MapObject {
 	{
 		this(pc.GetPoint3Dlocation(),pc.getSpeed(),pc.getRadius(), pc.GetId());
 	}
-	public Packman(Point3D pnt,double speed,int radius, int id)
+	public Packman(Point3D pnt,int speed,int radius, int id)
 	{
 		super.SetPoint3DLocation(pnt);
 		super.SetId(id);
@@ -54,7 +54,7 @@ public class Packman extends MapObject {
 		return pathIdx++;
 	}
 	
-	public Packman(Point pnt,double speed,int radius,int id)
+	public Packman(Point pnt,int speed,int radius,int id)
 	{
 		super.SetPointLocation(pnt);
 		super.SetId(id);
@@ -72,13 +72,13 @@ public class Packman extends MapObject {
 //		this.setId(id);
 	}
 	
-	public double getSpeed() {
+	public int getSpeed() {
 		return speed;
 	}
 
 	
 
-	public void setSpeed(double speed) {
+	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
 
@@ -97,14 +97,29 @@ public class Packman extends MapObject {
 	{
 		return "Packman id=" + super.GetId() + ", location=" + "x:"+ super.GetPointlocation().x + "y:"+ super.GetPointlocation().y + ", speed=" + speed + ", radius="+ radius;
 	}
+	
+	public String[] ToStringArr() 
+	{
+		// TODO Auto-generated method stub
+		char type='P';
+		int alt=0;
+		String [] sPacArr=new String [] {String.valueOf(type),String.valueOf(super.GetId()),String.valueOf(super.GetPoint3Dlocation().y()) ,String.valueOf(super.GetPoint3Dlocation().x()) ,String.valueOf(alt),String.valueOf(speed), String.valueOf(radius)};
+		return sPacArr;
+	}
+	
 
 	MyMap map= new MyMap();
 	Image packmenIcon;          
-      public void Draw(Graphics g) 
+      public void Draw(Graphics g,Color color) 
     {
-    	   	g.setColor(Color.red);
+    	   	g.setColor(/*Color.red*/color);
         	
-   	g.fillOval(super.GetPointlocation().x,super.GetPointlocation().y,40,40);
+     
+      //	packmenIcon = Toolkit.getDefaultToolkit().getImage("C:\\pacman.png");
+      //	g.drawImage(packmenIcon,x_pacman, y_pacman, 28, 28,this);
+      	 
+      	//Point pixel=Map.getPositionOnScreen(this.locationPoint.x(), this.locationPoint.y());
+  		g.fillOval(super.GetPointlocation().x,super.GetPointlocation().y,20,20);
         
     }
 }

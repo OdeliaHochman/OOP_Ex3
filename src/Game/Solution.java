@@ -11,15 +11,11 @@ import java.util.Map;
 	 */
 	public class Solution {
 
-		Map<Integer, ArrayList<Path>>pathListMapper;// = new HashMap<>();
-		//ArrayList<Path> pathList;
-
-		
+		Map<Integer, ArrayList<Path>>pathListMapper;
+	
 		public Solution()
 		{
-			pathListMapper = new HashMap<>();
-			//pathList = new ArrayList<>();
-			
+			pathListMapper = new HashMap<>();	
 		}
 		
 		/**
@@ -36,14 +32,12 @@ import java.util.Map;
 				pathListMapper.get(path.GetIDPackman()).add(path);// = al;
 				
 			}
-			else
-				
+			else	
 			{
 				Path prev= GetLastPath(path.GetIDPackman());
 				path.SetTime0(prev.GetTimeT());
 				pathListMapper.get(path.GetIDPackman()).add(path);
 			}
-			//return pathList.add(path);
 			return true;
 		}
 		
@@ -127,12 +121,14 @@ import java.util.Map;
 		 */
 		public Path GetPath(int idPc,int idxPath) 
 		{
+		
 			ArrayList<Path> al = pathListMapper.get(idPc);
 			if(al.size()>idxPath)
 				return al.get(idxPath);
 			else 
 				return null;
 		}
+		
 		public Path GetLastPath(int idPc) 
 		{
 			int idxPath = pathListMapper.get(idPc).size()-1;
