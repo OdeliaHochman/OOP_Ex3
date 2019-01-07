@@ -5,11 +5,8 @@ import Game.Fruit;
 import Game.Game;
 import Game.Packman;
 import Game.Path;
-import Game.Solution;
 import Geom.Point3D;
 import Map.MyMap;
-import Map.MyFrame.GameObjectType;
-
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Menu;
@@ -26,7 +23,6 @@ import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.net.Socket;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,7 +62,7 @@ class PacmanTimer
 	public void Start(int pcID, int period) {
 		// TODO Auto-generated method stub
 		timer=new Timer();
-		timer.scheduleAtFixedRate( new PacmanDoTask(m_form,pcID), (long)100* period, (long)200 * period /** 60 * 60 * period*/); 
+		timer.scheduleAtFixedRate( new PacmanDoTask(m_form,pcID), (long)50* period, (long)50 * period /** 60 * 60 * period*/); 
 	}
 	public void Stop() 
 	{
@@ -78,22 +74,17 @@ class PacmanTimer
 class PacmanDoTask extends TimerTask {
 	MyFrame m_form  = null;
 	int m_pcID = -1;
-	Game game= new Game();
-	int idx=0;
-	ArrayList<Packman> pac = game.GetArrListPac();
-	ArrayList<Fruit> frt = game.GetArrListFruit();
 	PacmanDoTask(MyFrame form,int pcID){m_form = form;m_pcID = pcID;}
 	public void run() 
 	{
-		
-	//	System.out.println("PC ID "+ m_pcID);
-	//	Path path= new Path(game.GetArrListFruit().get(idx).GetId(),game.GetArrListFruit().get(idx).GetId(),sl.GetPath(idx, idx).GetDeltatime());
-       //System.out.println(ShortestPathAlgo.ToStringAlgo());
+		//System.out.println("PC ID "+ m_pcID);
+		//System.out.println("time start:"+ );
+	//	System.out.println("time start:"+ path.GetTime0()+ " ," + "get timeT:"+ path.GetTimeT() +", " + path.GetDeltatime());
+
 		m_form.Repaint();
 		//code to send SMS.
 	}
 }
-
 
 public class MyFrame extends JFrame implements MouseListener
 {
@@ -129,21 +120,7 @@ public class MyFrame extends JFrame implements MouseListener
 	
 	}
 
-
-
-	private void DrawPoints(Graphics g)
-	{
-//		g.drawImage(map.GetImage(), 0, 0, this);
-//		g.drawImage(packman, 10, 10, this);
-//		for (Point point : pnts) {
-//			if(x!=-1 && y!=-1)
-//			{
-//				int r =30;
-//				g.fillOval(point.x, point.y, r, r);
-//			}
-//		}
-
-	}
+	
 	private void initGUI() 
 	{
 	
@@ -175,83 +152,65 @@ public class MyFrame extends JFrame implements MouseListener
 			
 				{
 					String csvFileName = chooser.getSelectedFile().getPath();
-					//String csvFileName="game_1543693911932.csv";
+					//String csvFileName="game_1543693911932_save1.csv";//
+					//String csvFileName ="game_1543693911932.csv";
 					game.LoadCsv(csvFileName);
 				    System.out.println("You chose to open file: " + chooser.getSelectedFile().getName());
                     repaint();
-                   pathManager= new ShortestPathAlgo(game);
-                   pathManager.InitShortestPathAlgo();
+                    pathManager= new ShortestPathAlgo(game);
+                    pathManager.InitShortestPathAlgo();
                    
                     
     				if(returnVal == JFileChooser.CANCEL_OPTION)
     				{
     					field.setText("cancel");
     				}
-    				 
+    				       
 				}
 				
 			}
 			else 
 			if(e.getActionCommand()=="Save Game")
 			{
-				String csvFileName="f16.csv";//"game_1543693911932_save1.csv";
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
+				chooser.setFileFilter(filter);
+				int returnVal = chooser.showOpenDialog(null);
+				if(returnVal == JFileChooser.APPROVE_OPTION || true)
+			
+				{
+					String csvFileName = chooser.getSelectedFile().getPath();
+			
+				//String csvFileName="game_1543693911932_save1.csv";
 				game.UpLoadCsv(csvFileName);
 			}
+				
+				System.out.println("You chose to save file: " + chooser.getSelectedFile().getName());
+                repaint();
+                pathManager= new ShortestPathAlgo(game);
+                pathManager.InitShortestPathAlgo();
+               
+                
+				if(returnVal == JFileChooser.CANCEL_OPTION)
+				{
+					field.setText("cancel");
+				}
+			}
+				
 		  }
 		};
 		
-//		ActionListener argSave = new ActionListener()
-//		{
-//			@Override
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//
-//				JFileChooser chooser = new JFileChooser();
-//				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
-//				chooser.setFileFilter(filter);
-//				int returnVal = chooser.showOpenDialog(null);
-//				if(returnVal == JFileChooser.APPROVE_OPTION || true)
-//				{
-//					String saveFileName = chooser.getSelectedFile().getPath();
-//					if(saveFileName.endsWith(".csv"))
-//					{
-//						CsvWriter csvWriter = new CsvWriter(saveFileName);
-//					}
-//					else if(saveFileName.endsWith(".kml"))
-//					{
-//						Path2Kml path2Kml= new Path2Kml(saveFileName);
-//					}
-//					else
-//					{
-//						field.setText("File extension must be csv or kml."); ////???
-//					}
-//
-//					pathManager= new ShortestPathAlgo(game);
-//					pathManager.InitShortestPathAlgo();
-//
-//				}
-//				if(returnVal == JFileChooser.CANCEL_OPTION)
-//				{
-//					field.setText("cancel");
-//				}
-//
-//
-//			}
-//		};
 		ActionListener argRun = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				int a = 0;
-				a++;
-				//System.out.println(packman.toString());
+				
+				System.out.println("menue a Clicked");
 				x = 500;
 				y = 500;
 				if(pathManager == null)
 					pathManager= new ShortestPathAlgo(game);
 				
-		        //pathManager.InitShortestPathAlgo();
 				pacsTimer.Start(1, 2);
 				
 				
@@ -263,9 +222,8 @@ public class MyFrame extends JFrame implements MouseListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				int b = 0;
-				b++;
-				System.out.println("menue b Clicked");
+				
+				//System.out.println("menue b Clicked");
 				//timer.purge();
 				pacsTimer.Stop();
 			}
@@ -295,20 +253,25 @@ public class MyFrame extends JFrame implements MouseListener
 
 	int x = -1;
 	int y = -1;
-
+	public BufferedImage packmanImage;
+	
 	public void DrawPackmans(Graphics g, ArrayList<Packman> packmanLst) 
-	{
-		Color clrOld = g.getColor();
-		Color[] clrs =  new Color[] {Color.BLUE,Color.CYAN,Color.RED};
-		int idxColor =0;
-		for (Iterator<Packman> iterator = packmanLst.iterator(); iterator.hasNext();) {
-			Packman packman = (Packman) iterator.next();
-			Color color = (clrs[idxColor]);
-			packman.Draw(g,color);
-			idxColor++;
-			idxColor%=3;
+	{		
+		try { 
+			packmanImage = ImageIO.read(new File("ghost0.png")); 
+		} 
+		catch (IOException e) 
+		
+		{ e.printStackTrace();
+		
 		}
-		g.setColor(clrOld);
+		for (Iterator<Packman> iterator = packmanLst.iterator(); iterator.hasNext();) 
+		{
+			Packman p = iterator.next();
+			Point pixelPoint =MyMap.getPositionOnScreen(p.GetPoint3Dlocation().y(), p.GetPoint3Dlocation().x());
+			g.drawImage(packmanImage,pixelPoint.x-15,pixelPoint.y-15,30,30,this);
+		}
+		
 		
 		
 	}
@@ -323,7 +286,9 @@ public class MyFrame extends JFrame implements MouseListener
 		   if(fruitLst.get(idxFrut).Getvisibal()==true) 
 		   {
 			fruitLst.get(idxFrut).Draw(g);
-		   }		
+		   }
+			
+			
 			
 		}
 			
@@ -332,20 +297,10 @@ public class MyFrame extends JFrame implements MouseListener
 	
 	public void paint(Graphics g)
 	{
-		
-		//DrawPC(g,m_pcID);
-		//DrawPoints(g);
-		g.drawImage(map.GetImage(), 0, 0, this);
-		
-		
-//		 g.setColor(Color.red);
-//			
-//	
-//				int r =20;
-//				x = x - (r / 2);
-//				y = y - (r / 2);
-//				g.fillOval(x, y, 10, 10);
-					
+		//map.setSize(1378, 642);
+		//g.drawImage(map.GetImage(),0, 0, this);
+		g.drawImage(map.GetImage(), 0, 0, 1372,634, this);//1372,635
+							
 		ArrayList<Packman> packmanLst= game.GetArrListPac();
 		if(packmanLst!=null) 
 		DrawPackmans(g,packmanLst);
@@ -398,12 +353,11 @@ public class MyFrame extends JFrame implements MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg) 
 	{
-		System.out.println("mouse Clicked");
-		System.out.println("("+ arg.getX() + "," + arg.getY() +")");
+		//System.out.println("mouse Clicked");
+		//System.out.println("("+ arg.getX() + "," + arg.getY() +")");
 		x = arg.getX();
 		y = arg.getY();
 		Point pnt= new Point(x, y);
-		//convert for Lat Lon
 		Point3D pnt3D= new Point3D(MyMap.getPositionOnMap(pnt));
 		switch(gameType2Add)
 		{
@@ -432,7 +386,7 @@ public class MyFrame extends JFrame implements MouseListener
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		//System.out.println("mouse entered");
+	//	System.out.println("mouse entered");
 
 	}
 

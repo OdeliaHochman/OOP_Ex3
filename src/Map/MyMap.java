@@ -19,16 +19,19 @@ import GUI.JFrmaeGraphics;
 import Geom.Point3D;
 
 public final class MyMap extends JPanel{
-  private BufferedImage myImage;
+  private  BufferedImage myImage;
 	
-	static final int mapWidth =1498 , mapHeight =600;
+	static final int mapWidth =1360/*1372*/ , mapHeight =657;//635
 	//offsets
-	static final double mapLongitudeStart =35.202261, mapLatitudeStart =32.105817;
+	static final double mapLongitudeStart =35.202261/*35.202303*/, mapLatitudeStart =32.105817;//32.105731
 	//length of map in long/lat
 	static final double mapLongitudeStop=35.213001,mapLatitudeStop=32.102116 ; 
 	static final double mapLongitudeWidth =mapLongitudeStop-mapLongitudeStart, 
 			// invert because it decreases as you go down
-			mapLatitudeHeight = mapLatitudeStart -mapLatitudeStop;
+			
+			//mapLatitudeHeight = mapLatitudeStart -mapLatitudeStop;
+	
+			mapLatitudeHeight = mapLatitudeStart-32.101869;
 	
 	
 	
@@ -36,6 +39,8 @@ public MyMap()
 {
 	try {
 		myImage = ImageIO.read(new File("Ariel1.jpg"));
+		//BufferedImage image= new BufferedImage(200, 200, myImage);
+		
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -44,7 +49,14 @@ public MyMap()
 
   public BufferedImage GetImage() 
   {
+	  
 	  return myImage;
+  }
+  
+  public void SetImage(BufferedImage myImg) 
+  {
+	 
+	  this.myImage=myImg;
   }
 
 public void paint(Graphics g)

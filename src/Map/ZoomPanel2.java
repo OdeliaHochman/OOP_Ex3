@@ -25,7 +25,7 @@ public class ZoomPanel2 extends JPanel implements MouseListener, MouseWheelListe
 	private BufferedImage sourceImage;
 	private int sourceImageWidth, sourceImageHeight;
 	private int _width = 1498, _height = 600;
-	private static String picture = "C:\\Ariel1.jpg";
+	private static String picture = "Ariel1.jpg";
 	private double _zoom = 1d, _cZoom = 0.01, _minSize = 1;
 	private double xPoint0 = 0, yPoint0 = 0;
 	private boolean flagPaint = false;
@@ -39,7 +39,7 @@ public class ZoomPanel2 extends JPanel implements MouseListener, MouseWheelListe
 	private void initializePanel() {
 		this.setPreferredSize(new Dimension(_width, _height));
 		try {
-			File file = new File("C:\\Ariel1.jpg");
+			File file = new File("Ariel1.jpg");
 			sourceImage = ImageIO.read(file);
 			sourceImageWidth = sourceImage.getWidth();
 			sourceImageHeight = sourceImage.getHeight();
@@ -76,8 +76,8 @@ public class ZoomPanel2 extends JPanel implements MouseListener, MouseWheelListe
 			else
 				y = (int)(midY - (midY - yPoint0)*_zoom );
 			g.fillOval(x, y, 7, 7);
-			System.out.println("zoom= " + _zoom+", xPoint0 = "+xPoint0+", yPoint0 = "+yPoint0);
-			System.out.println("with zoom x = "+ x +", y=" + y);
+			//System.out.println("zoom= " + _zoom+", xPoint0 = "+xPoint0+", yPoint0 = "+yPoint0);
+			//System.out.println("with zoom x = "+ x +", y=" + y);
 		}
 		else flagPaint = true;
 	}

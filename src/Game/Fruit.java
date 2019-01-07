@@ -6,17 +6,20 @@ import java.awt.Point;
 import Map.MyMap;
 import Geom.Point3D;
 import java.awt.Point;
+import GIS.MyMeta_data;
 
 /**
  * A class that represents a "target" in a known geographic location without movement
  * @author Efrat Cohen and Odelia Hochman
  *
  */
-public class Fruit extends MapObject {
+public class Fruit extends MapObject{
 	
 	
 	private int weight;
 	private boolean visible=true;
+	private MyMeta_data timeFruit;
+
 	
 
 	/**
@@ -77,6 +80,16 @@ public class Fruit extends MapObject {
 		return weight;
 	}
 	
+	public void SetTimeFruit(MyMeta_data timeFruit) 
+	{
+		this.timeFruit=timeFruit;
+	}
+	
+	public MyMeta_data GetTimeFruit() 
+	{
+		return timeFruit;
+	}
+	
 	public String toString() 
 	{
 		String s= "Fruit:\n location="+ "x: "+ super.GetPointlocation().x+"y: "+ super.GetPointlocation().y + ",id=" + super.GetId() +" ,weight="+ weight; 
@@ -93,9 +106,10 @@ public class Fruit extends MapObject {
 	
 	   public void Draw(Graphics g) 
 	    {
-	    	g.setColor(Color.green);
+	    	g.setColor(Color.RED);
 	    	//Point pixel=Map.getPositionOnScreen(this.location.x(), this.location.y())
-			g.fillOval(super.GetPointlocation().x, super.GetPointlocation().y,10, 10);
+			g.fillOval(super.GetPointlocation().x, super.GetPointlocation().y,15, 15);
 
 	    }
+	   
 }

@@ -193,26 +193,29 @@ public class MyCoords implements coords_converter {
 	 * @return
 	 */
 	@Override
-	
 	public boolean isValid_GPS_Point(Point3D p)
 	{
 
-		if(p.x()<-180 || p.x()>180 || p.y()<-90 || p.y()>90 || p.z()<-450 )
+		if(p.y()<-180 || p.y()>180 || p.x()<-90 || p.x()>90 || p.z()<-450 )
 		{
 			return false;
 		}
 		return true;
 	}
 	
+	
+	
 //	public boolean isValid_GPS_Point(Point3D p)
 //	{
 //
-//		if(p.y()<-180 || p.y()>180 || p.x()<-90 || p.x()>90 || p.z()<-450 )
+//		if(p.x()<-180 || p.x()>180 || p.y()<-90 || p.y()>90 || p.z()<-450 )
 //		{
 //			return false;
 //		}
 //		return true;
 //	}
+//	
+
 
 
 }

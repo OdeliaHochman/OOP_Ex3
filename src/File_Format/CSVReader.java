@@ -11,27 +11,6 @@ import GIS.MyGIS_project;
 
 public class CSVReader {
 
-//    public static void main(String[] args)
-//    {
-//    	String sDirName = "C:\\data\\";
-//    	MultiCSV multCsv = new MultiCSV(sDirName);
-//    	ArrayList<File> fl = multCsv.getFiles(sDirName);
-//    	ArrayList<String[] > al = null;
-//    	String [] csvFiles={"WigleWifi_20171201110209.csv"};
-//    	String [] kmlFiles= new String[csvFiles.length];
-//    	for (int idx=0;idx<csvFiles.length;idx++ ) {
-//    		 String csvFile  = csvFiles[idx];
-//    		 String kmlFile =  csvFile.split("[.]")[0]+".kml";
-//    		 kmlFiles[idx] = kmlFile;
-//    		 al = ReadFile(sDirName+csvFile);
-//		}
-//    
-//    	//kmlFiles
-//    	for (String sKmlFile : kmlFiles) {
-//    		 
-//        	csv2kml.writeFileKML(al,sDirName+sKmlFile);
-//		}		
-//    }
 	
 	public static void main(String[] args)
     {

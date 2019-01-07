@@ -1,9 +1,12 @@
 package Game;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 	/**
 	 * The department represents a collection of paths
 	 * @author Efrat Cohen and Odelia Hochman
@@ -12,11 +15,32 @@ import java.util.Map;
 	public class Solution {
 
 		Map<Integer, ArrayList<Path>>pathListMapper;
+		
 	
 		public Solution()
 		{
 			pathListMapper = new HashMap<>();	
 		}
+		public void Print()
+		{
+			 for (Entry<Integer, ArrayList<Path>> subSet: pathListMapper.entrySet()) 
+			 {
+				    final Integer idPac = subSet.getKey();
+				    final ArrayList<Path> alPath = subSet.getValue();
+		    		//Collections.sort(pathListMapper.get(alPath.get(path).GetIDPackman()), Path.PathDTimeComparator);
+
+				   
+				   // for (Path path : alPath) {
+				    	for (int path = 0; path < alPath.size(); path++) 
+				    	{
+				    		//Collections.sort(pathListMapper.get(alPath.get(path).GetIDPackman()), Path.PathDTimeComparator);
+							System.out.println("pc "+alPath.get(path).GetIDPackman()+" pc "+idPac+" frt "+alPath.get(path).GetIDFruit()+" T0 "+alPath.get(path).GetTime0()+" Tt "+alPath.get(path).GetTimeT()+" DelT "+alPath.get(path).GetDeltatime()); 
+
+						}
+					}
+			 }
+				    
+		
 		
 		/**
 		 *  The function checks whether the path has been added to the path collection
@@ -30,16 +54,24 @@ import java.util.Map;
 				ArrayList<Path> al = new ArrayList<>();
 				pathListMapper.put(path.GetIDPackman(), al);
 				pathListMapper.get(path.GetIDPackman()).add(path);// = al;
+				//Collections.sort(pathListMapper.get(path.GetIDPackman()), Path.PathDTimeComparator);
+				
 				
 			}
 			else	
 			{
 				Path prev= GetLastPath(path.GetIDPackman());
 				path.SetTime0(prev.GetTimeT());
+				path.SetTimeT(prev.GetTimeT()+path.GetDeltatime());//*****
+				//path.SetDeltatime(path.GetDeltatime()-prev.GetTimeT());
 				pathListMapper.get(path.GetIDPackman()).add(path);
+			
+				
 			}
 			return true;
 		}
+		
+		
 		
 		/**
 		 * @return size of path collection
@@ -53,6 +85,15 @@ import java.util.Map;
 			else return -1;
 		}
 		
+//		public void comper() 
+//		{
+//			for (int i = 0; i < pathListMapper.size(); i++) 
+//			{
+//				comper();
+//				
+//			}
+//		}
+//		
 		/**
 		 * The function checks whether the requested path is deleted from the paths collection
 		 * @param path
@@ -121,14 +162,13 @@ import java.util.Map;
 		 */
 		public Path GetPath(int idPc,int idxPath) 
 		{
-		
 			ArrayList<Path> al = pathListMapper.get(idPc);
 			if(al.size()>idxPath)
 				return al.get(idxPath);
+			
 			else 
 				return null;
 		}
-		
 		public Path GetLastPath(int idPc) 
 		{
 			int idxPath = pathListMapper.get(idPc).size()-1;

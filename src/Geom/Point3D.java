@@ -40,8 +40,8 @@ public class Point3D implements Geom_element, Serializable
 	
 	public Point3D(String[] stringsOfGisElem) 
 	{
-         _x= Double.parseDouble(stringsOfGisElem[2]) ;
-         _y=Double.parseDouble(stringsOfGisElem[3]);
+         _x= Double.parseDouble(stringsOfGisElem[3]) ;
+         _y=Double.parseDouble(stringsOfGisElem[2]);
          _z=Double.parseDouble(stringsOfGisElem[4]);
 
 	}

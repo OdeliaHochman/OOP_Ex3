@@ -36,12 +36,12 @@ public class ShortestPathAlgo {
 	public Path path;
 	private double speed;
 	private long gameTimeSec;
-	static ArrayList<Packman> packmanList;
+	ArrayList<Packman> packmanList;
 	ArrayList<Fruit>fruitList;
 	//private HashSet<Integer> hashAvailableFrt = new HashSet<>();
 	private HashMap<Integer,Fruit> hashAvailableFruit = new HashMap<>();
 	private HashMap<Integer,Packman> hashAvailablePackman = new HashMap<>();
-	static //double timeTotal = path.getTime0()+path.getDeltatime();//efrat 24.12.18
+	//double timeTotal = path.getTime0()+path.getDeltatime();//efrat 24.12.18
 	Solution allPath = new Solution();
 	//Path newPath=new Path();
     private int nAvailableFruit =0;
@@ -72,10 +72,13 @@ public class ShortestPathAlgo {
 		{
 			Fruit frtTst = hashAvailableFruit.get(idFrut);
 			pcTst.SetPointLocation(frtTst.GetPointlocation());
-		  //hashAvailableFrt.remove(idxFrut);
-		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
-		  //nAvailableFruit = hashAvailableFruit.size();
-	
+		   hashAvailableFruit.remove(idFrut);
+		  if(hashAvailableFruit.isEmpty()) 
+		  {
+	        	System.out.println("The minimum time to eat all fruits:"+ " "+ gameTimeSec);
+
+		  }
+	    
 		}
 	}
 	private void InitFruitsLocation()
@@ -88,6 +91,7 @@ public class ShortestPathAlgo {
 		  hashAvailableFruit.put(frt.GetId(),new Fruit(frt));
 		}
 		nAvailableFruit = fruitList.size();
+
 	}
 	boolean IsEatable(int idPc,int idFrut,double pathTotalTime)
 	{
@@ -95,7 +99,7 @@ public class ShortestPathAlgo {
 		Fruit frt = hashAvailableFruit.get(idFrut);
 		Packman pc = hashAvailablePackman.get(idPc);
 		boolean ans2= false;
-		if(frt!= null&&pc!= null)
+		if(frt!= null && pc!= null)
 		{
 			ans2 =	IsPackmanReachedFruit2(pc.GetPoint3Dlocation(),
 				frt.GetPoint3Dlocation(),1);
@@ -110,8 +114,9 @@ public class ShortestPathAlgo {
 		boolean ans2= false;
 		if(frt!=null&&pc!=null)
 		{
+			int distanceToInt=1;
 			ans2 =	IsPackmanReachedFruit2(pc.GetPoint3Dlocation(),
-				frt.GetPoint3Dlocation(),1);
+				frt.GetPoint3Dlocation(),distanceToInt);
 		}
 		return ans1||ans2;
 	}
@@ -119,19 +124,7 @@ public class ShortestPathAlgo {
 	{
 		idFrut.SetVisible(false);
 		
-		
-//		Packman pcTst = hashAvailablePackman.get(idPc);
-//		
-//		if(hashAvailableFruit.containsKey(idFrut))
-//		{
-//			Fruit frtTst = hashAvailableFruit.get(idFrut);
-//			pcTst.SetPointLocation(frtTst.GetPointlocation());
-//		  //hashAvailableFrt.remove(idxFrut);
-//		   hashAvailableFruit.remove(idFrut);//NAF 24.12.18
-//		  //nAvailableFruit = hashAvailableFruit.size();
-//		  
-//			
-//		}
+
 	}
 	public void InitShortestPathAlgo()
 	{
@@ -160,7 +153,6 @@ public class ShortestPathAlgo {
 				InitPathes();
 			
 			gameTimeSec++;
-			
 			for (Entry<Integer, Packman> subSet: hashAvailablePackman.entrySet()) 
 			 {
 				final Integer idPc = subSet.getKey();
@@ -177,6 +169,8 @@ public class ShortestPathAlgo {
 					nAvailableFruit--;
 					if(nAvailableFruit == 0)//no more fruits to eat
 					{
+			        	//System.out.println("The minimum time to eat all fruits:"+ " "+ gameTimeSec);
+
 						break;
 					}
 					
@@ -196,6 +190,7 @@ public class ShortestPathAlgo {
 						else
 							if(frtTst!=null)
 						       SetPosition2Time(path,pcTst,frtTst , gameTimeSec);
+						
 							else
 								PathPac2Fruit(hashAvailablePackman.get(idPc));
 					}
@@ -236,24 +231,37 @@ public class ShortestPathAlgo {
 			if(currPath!=null)
 			{
 			   Fruit frt = hashAvailableFruit.get(currPath.GetIDFruit());
-			   if(frt == null)
-			   {
-				   pc.IncreasePathIndex();
-				   bCurrPathChange = GetPackCurrentPath(pc,gameTimeSec,currPath);
-				   frt = hashAvailableFruit.get(currPath.GetIDFruit());
-			   }
+//			   if(frt == null)
+//			   {
+//				   pc.IncreasePathIndex();
+//				   bCurrPathChange = GetPackCurrentPath(pc,gameTimeSec,currPath);
+//				   frt = hashAvailableFruit.get(currPath.GetIDFruit());
+//			   }
 			
 			   SetPosition2Time(currPath, pc, frt, gameTimeSec);
-			  // boolean ans = IsEatable2(pc.GetId(),frt.GetId(),currPath.GetTimeT());
-				//if(ans==false)
-			
-				if(bCurrPathChange==true)
+			   boolean ans = IsEatable2(pc.GetId(),frt.GetId(),currPath.GetTimeT());
+
+				if(bCurrPathChange||ans==true)//distance2Eat
 				{
 					EatFruit(frt);
+				    System.out.println("Packman ID:"+pc.GetId()+ " , " +"Fruit ID:"+ currPath.GetIDFruit()+" , "+"Time Start: "+ currPath.GetTime0()+", "+"Time Totale:"+ " , "+currPath.GetTimeT());
 					UpadteFruitsArray();
+					bCurrPathChange = GetPackCurrentPath(pc,gameTimeSec,currPath);
+					SetPosition2Time(currPath, pc, frt, gameTimeSec);
 					
 
 			    }
+				else 
+			    if(hashAvailableFruit.isEmpty()) 
+		        {
+			    
+			        	System.out.println("The minimum time to eat all fruits:"+ " "+ gameTimeSec);
+			 	
+		        
+		        }
+					
+
+
 			}	
 		}
 	
@@ -264,36 +272,17 @@ public class ShortestPathAlgo {
 		
 		else
 			return false;
+			
 	}
 	
-		
-		
-
-
-	
-//  private Path GetPackCurrentPath(Packman pc,double gameTimeSec) {
-//		
-//		Path path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
-//		if(path != null&& pc!=null)
-//		{
-//			if(gameTimeSec < path.GetTimeT())//if time in path, get current path;
-//			   return path;
-//			else
-//			{
-//				pc.IncreasePathIndex();// get next path
-//				path  = allPath.GetPath(pc.GetId(), pc.GetCurrentPathIndex());
-//				return path;
-//			}
-//		}
-//		return null;
-//	}
-
 	
 	private boolean GetPackCurrentPath(Packman pc,double gameTimeSec, Path path) 
 	{
 		
 		boolean bchangePath=false;
 		path = allPath.GetPath(pc.GetId(),pc.GetCurrentPathIndex());
+	     //  System.out.println("Packman ID:"+pc.GetId()+ " , " +"Fruit ID:"+ path.GetIDFruit()+" , "+"Time Start: "+ path.GetTime0()+", "+"Time Totale:"+ " , "+path.GetTimeT());
+
 		if(path != null&& pc!=null)
 		{
 			if(gameTimeSec < path.GetTimeT())//if time in path, get current path;
@@ -304,11 +293,13 @@ public class ShortestPathAlgo {
 			{
 				pc.IncreasePathIndex();// get next path
 				path  = allPath.GetPath(pc.GetId(),pc.GetCurrentPathIndex());
+
 				
 				 bchangePath=true;
 				return bchangePath;	
 	        }
         }
+
 		return bchangePath;
 	}
 	
@@ -357,6 +348,7 @@ public class ShortestPathAlgo {
 	   double theShortsTime =pathFun[2];
 	   Path path = new Path(idPackman,idFruit,theShortsTime);
 	   allPath.add(path);
+	  // allPath.Print();//*************
 	  
 	}
 private static double[] findClosestFruit(Packman p, HashMap<Integer, Fruit> hashLeftFruits) {
@@ -370,8 +362,6 @@ private static double[] findClosestFruit(Packman p, HashMap<Integer, Fruit> hash
 		    
 			double timeP2F=distanceInTimeP2F(p, fruit);
 			hashTimePc2FruitID.put(timeP2F, fruit.GetId());
-			//arrTimeOfPc.add(timeP2F);
-		    //println("\tSub-Edge #" + kk + "\tis " + vv + ".");
 	  }
 	   double theShortsTime=Double.MAX_VALUE;//arrTimeOfPc.get(0);
 	   int idFruit=-1;
@@ -461,15 +451,6 @@ private static double[] findClosestFruit(Packman p, HashMap<Integer, Fruit> hash
 			//	xx++;
 			//}
 		} 
-	static int idx=0;
-
-	public static String ToStringAlgo() 
-	{
-		String s=allPath.GetPath(packmanList.get(idx).GetId(), packmanList.get(idx).GetCurrentPathIndex()).toString();
-		idx++;
-		
-		return s;
-	}
 	
  /**
   * The function checks whether the Pacman has reached fruit
@@ -486,7 +467,7 @@ private static double[] findClosestFruit(Packman p, HashMap<Integer, Fruit> hash
 			else
 				return true;
 	}
-	public boolean IsPackmanReachedFruit2(Point3D pntPc,Point3D pntFrt,double minDist2Eat )
+	public boolean IsPackmanReachedFruit2(Point3D pntPc,Point3D pntFrt,double minDist2Eat)
 	{
 		MyCoords coords = new MyCoords();
 		double disPc2Frt= coords.distance3d(pntPc, pntFrt);
